@@ -139,20 +139,20 @@ struct registerView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             navigateToGrid = true
         }
-            
-            alertMessage = "Account registered successfully!"
-            showAlert = true
-        }
+        
+        alertMessage = "Account registered successfully!"
+        showAlert = true
+    }
     
     func saveUser(_ user: User) {
         let encoder = JSONEncoder()
         if let encoded = try? encoder.encode(user) {
-            UserDefaults.standard.set(encoded, forKey: user.email)
+            UserDefaults.standard.set(encoded, forKey: "user-\(user.email)")
         }
     }
 
     func getUser(byEmail email: String) -> User? {
-        if let savedUserData = UserDefaults.standard.data(forKey: email) {
+        if let savedUserData = UserDefaults.standard.data(forKey: "user-\(email)") {
             let decoder = JSONDecoder()
             if let decodedUser = try? decoder.decode(User.self, from: savedUserData) {
                 return decodedUser
