@@ -10,6 +10,7 @@ import SwiftUI
 struct profileView: View {
     var body: some View {
         Text("Profile")
+            
     }
 }
 
