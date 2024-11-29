@@ -117,7 +117,7 @@ struct loginView: View {
     }
     
     func getUser(byEmail email: String) -> User? {
-        if let savedUserData = UserDefaults.standard.data(forKey: email) {
+        if let savedUserData = UserDefaults.standard.data(forKey: "user-\(email)") {
             let decoder = JSONDecoder()
             if let decodedUser = try? decoder.decode(User.self, from: savedUserData) {
                 return decodedUser
