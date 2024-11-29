@@ -95,27 +95,38 @@ struct loginView: View {
             showAlert = true
             return
         }
-
-        let key = "RegisteredAccounts"
         
-        if let usersData = UserDefaults.standard.data(forKey: key),
-           let users = try? JSONDecoder().decode([User].self, from: usersData) {
+        if let storedUser = getUser(byEmail: email) {
             
-            if  let user = users.first(where: { $0.email == email && $0.password == password }) {
-                
+            if storedUser.password == password {
                 withAnimation {
                     currentImage = (currentImage == "loginbw2") ? "loginclr2" : "loginbw2"
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     navigateToGrid = true
                 }
-                return
+                
+            } else {
+                alertMessage = "Incorrect password."
+                showAlert = true
+            }
+        } else {
+            alertMessage = "No account found with that email."
+            showAlert = true
+        }
+    }
+    
+    func getUser(byEmail email: String) -> User? {
+        if let savedUserData = UserDefaults.standard.data(forKey: email) {
+            let decoder = JSONDecoder()
+            if let decodedUser = try? decoder.decode(User.self, from: savedUserData) {
+                return decodedUser
             }
         }
         
-        alertMessage = "Invalid email or password."
-        showAlert = true
+        return nil
     }
+
 }
 
 #Preview {
