@@ -1,28 +1,6 @@
 import SwiftUI
 
-
-struct User: Codable {
-    let email: String
-    let password: String
-}
-
-struct CustomTextFieldStyle: TextFieldStyle {
-    
-    let icon: String
-    
-    func _body(configuration: TextField<_Label>) -> some View {
-        HStack {
-            Image(systemName: icon)
-                .foregroundColor(.gray)
-            configuration
-        }
-        .padding()
-        .background(Color.gray.opacity(0.2))
-        .cornerRadius(8)
-    }
-}
-
-struct loginView: View {
+struct LoginView: View {
     
     @State private var currentImage = "loginbw2"
     @State private var email = ""
@@ -96,7 +74,7 @@ struct loginView: View {
             return
         }
         
-        if let storedUser = getUser(byEmail: email) {
+        if let storedUser = UserManagement.shared.getUser(byEmail: email) {
             
             if storedUser.password == password {
                 withAnimation {
@@ -115,20 +93,9 @@ struct loginView: View {
             showAlert = true
         }
     }
-    
-    func getUser(byEmail email: String) -> User? {
-        if let savedUserData = UserDefaults.standard.data(forKey: "user-\(email)") {
-            let decoder = JSONDecoder()
-            if let decodedUser = try? decoder.decode(User.self, from: savedUserData) {
-                return decodedUser
-            }
-        }
-        
-        return nil
-    }
 
 }
 
 #Preview {
-    loginView()
+    LoginView()
 }
