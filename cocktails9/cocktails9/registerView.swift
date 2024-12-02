@@ -7,26 +7,7 @@
 
 import SwiftUI
 
-struct User: Codable {
-    let email: String
-    let password: String
-}
-
-struct CustomTextFieldStyleWithIcon: TextFieldStyle {
-    let icon: String
-
-    func _body(configuration: TextField<_Label>) -> some View {
-        HStack {
-            Image(systemName: icon)
-                .foregroundColor(.gray)
-            configuration
-        }
-        .padding()
-        .background(Color.gray.opacity(0.2))
-        .cornerRadius(8)
-    }
-}
-struct registerView: View {
+struct RegisterView: View {
     
     @State private var currentImage = "registerbw"
     @State private var email = ""
@@ -121,7 +102,7 @@ struct registerView: View {
         }
         
         
-        if let _ = getUser(byEmail: email) {
+        if let _ = UserManagement.shared.getUser(byEmail: email) {
                 alertMessage = "Email is already registered."
                 showAlert = true
                 return
@@ -129,7 +110,7 @@ struct registerView: View {
 
             let newUser = User(email: email, password: password)
             
-            saveUser(newUser)
+        UserManagement.shared.saveUser(newUser)
 
         
         withAnimation {
@@ -139,29 +120,9 @@ struct registerView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             navigateToGrid = true
         }
-        
-        alertMessage = "Account registered successfully!"
-        showAlert = true
-    }
-    
-    func saveUser(_ user: User) {
-        let encoder = JSONEncoder()
-        if let encoded = try? encoder.encode(user) {
-            UserDefaults.standard.set(encoded, forKey: "user-\(user.email)")
-        }
-    }
-
-    func getUser(byEmail email: String) -> User? {
-        if let savedUserData = UserDefaults.standard.data(forKey: "user-\(email)") {
-            let decoder = JSONDecoder()
-            if let decodedUser = try? decoder.decode(User.self, from: savedUserData) {
-                return decodedUser
-            }
-        }
-        return nil
     }
 }
 
 #Preview {
-    registerView()
+    RegisterView()
 }
