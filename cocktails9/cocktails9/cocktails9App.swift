@@ -11,7 +11,7 @@ import SwiftUI
 struct cocktails9App: App {
     var body: some Scene {
         WindowGroup {
-            ViewCoordinator()
+            ContentView()
         }
     }
 }
