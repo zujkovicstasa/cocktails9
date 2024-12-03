@@ -24,8 +24,8 @@ struct CocktailsGridView: View {
                 } else {
                     ScrollView {
                         LazyVGrid(columns: columns) {
-                            ForEach($viewModel.cocktails) { $cocktail in
-                                CocktailItem(cocktail: $cocktail)
+                            ForEach(viewModel.cocktails) { cocktail in
+                                CocktailItem(cocktail: cocktail)
                             }
                         }
                     }
@@ -34,7 +34,7 @@ struct CocktailsGridView: View {
             }
             
             .task {
-                await viewModel.fetchCocktails()
+                await viewModel.getCocktails()
             }
         }
     }

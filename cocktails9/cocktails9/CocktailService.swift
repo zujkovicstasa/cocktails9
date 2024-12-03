@@ -5,7 +5,6 @@ class CocktailService {
     private let networkManager: NetworkManager
     private let baseURL = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Alcoholic"
     
-    // Inject NetworkManager as a dependency
     init(networkManager: NetworkManager = .shared) {
         self.networkManager = networkManager
     }

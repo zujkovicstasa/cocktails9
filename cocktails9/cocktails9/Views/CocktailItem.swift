@@ -2,7 +2,8 @@ import SwiftUI
 
 struct CocktailItem: View {
     
-    @Binding var cocktail: Cocktail
+    @ObservedObject var viewModel: CocktailViewModel
+    let cocktail: Cocktail
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -30,13 +31,11 @@ struct CocktailItem: View {
                     .lineLimit(1)
                     .truncationMode(.tail)
                 
-                FavoriteButton(isFavorite: $cocktail.isFavorite)  // Pass the correct Binding here
+                FavoriteButton(isFavorite: .constant(cocktail.isFavorite)) {
+                    viewModel.toggleFavorite(cocktail: cocktail)
+                }
             }
         }
         .padding(5)
     }
-}
-
-#Preview {
-    // Here you can preview with a sample cocktail if needed
 }
