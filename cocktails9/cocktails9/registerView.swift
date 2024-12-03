@@ -15,7 +15,7 @@ struct RegisterView: View {
     @State private var repeatPassword = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @State private var navigateToGrid = false
+    @State private var navigateToHome = false
     
     var body: some View {
         
@@ -118,7 +118,7 @@ struct RegisterView: View {
         }
                         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            navigateToGrid = true
+            navigateToHome = true
         }
     }
 }
