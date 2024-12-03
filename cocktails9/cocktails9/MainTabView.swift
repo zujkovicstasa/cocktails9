@@ -12,16 +12,15 @@ struct MainTabView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Spacer()
         
                 Group {
                     switch selectedTab {
                     case .cocktails:
-                        cocktailsView()
+                        CocktailsView()
                     case .favorites:
-                        favoritesView()
+                        FavoritesView()
                     case .profile:
-                        profileView()
+                        ProfileView()
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -65,29 +64,6 @@ struct MainTabView: View {
                     .padding(.horizontal)
                 }
             }
-        }
-    }
-}
-
-struct TabButton: View {
-    let icon: String
-    let label: String
-    let isSelected: Bool
-    let selectedColor: Color
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(.system(size: 20))
-                    .foregroundColor(isSelected ? selectedColor : .secondary)
-                Text(label)
-                    .font(.caption2)
-                    .lineLimit(1)
-                    .foregroundColor(isSelected ? selectedColor : .secondary)
-            }
-            .frame(maxWidth: .infinity)
         }
     }
 }

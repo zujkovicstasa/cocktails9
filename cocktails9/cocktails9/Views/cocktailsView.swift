@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct cocktailsView: View {
+struct CocktailsView: View {
     var body: some View {
         Text("Cocktails")
     }
@@ -15,5 +15,5 @@ struct cocktailsView: View {
 }
 
 #Preview {
-    cocktailsView()
+    CocktailsView()
 }
