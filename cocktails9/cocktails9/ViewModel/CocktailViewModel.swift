@@ -10,7 +10,7 @@ class CocktailViewModel: ObservableObject {
     
     init(cocktailService: CocktailService) {
         self.cocktailService = cocktailService
-        if let currentUser = UserManager.shared.getUser(byEmail: "test@gmail.com") {
+        if let currentUser = UserManagement.shared.getUser(byEmail: "test@gmail.com") {
             self.user = currentUser
             self.cocktails = self.cocktails.map { cocktail in
                 var updatedCocktail = cocktail
@@ -42,7 +42,7 @@ class CocktailViewModel: ObservableObject {
             user.favoriteCocktails.removeAll { $0.id == updatedCocktail.id }
         }
         
-        UserManager.shared.saveUser(user)
+        UserManagement.shared.saveUser(user)
         
         if let index = cocktails.firstIndex(where: { $0.id == cocktail.id }) {
             cocktails[index] = updatedCocktail

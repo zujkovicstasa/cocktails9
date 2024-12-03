@@ -1,9 +1,3 @@
-//
-//  UserManager.swift
-//  cocktails9
-//
-//  Created by Stasa Zujkovic on 3.12.24..
-//
 
 import Foundation
 
@@ -14,8 +8,8 @@ struct User: Codable {
     var favoriteCocktails: [Cocktail] // List of Cocktail structs
 }
 
-class UserManager {
-    static let shared = UserManager()
+class UserManagement {
+    static let shared = UserManagement()
     
     private init() {}
     
