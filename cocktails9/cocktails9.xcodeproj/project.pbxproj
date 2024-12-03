@@ -11,6 +11,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		F642DF612CFF16D000B8E6B8 /* ViewModel */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		F6E19E002CF6027F00338A82 /* cocktails9 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = cocktails9;
@@ -34,6 +39,7 @@
 			children = (
 				F6E19E002CF6027F00338A82 /* cocktails9 */,
 				F6E19DFF2CF6027F00338A82 /* Products */,
+				F642DF612CFF16D000B8E6B8 /* ViewModel */,
 			);
 			sourceTree = "<group>";
 		};
@@ -61,6 +67,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				F642DF612CFF16D000B8E6B8 /* ViewModel */,
 				F6E19E002CF6027F00338A82 /* cocktails9 */,
 			);
 			name = cocktails9;

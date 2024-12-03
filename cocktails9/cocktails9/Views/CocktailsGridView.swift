@@ -1,18 +1,45 @@
-//
-//  CocktailsGridView.swift
-//  cocktails9
-//
-//  Created by Stasa Zujkovic on 2.12.24..
-//
-
 import SwiftUI
 
 struct CocktailsGridView: View {
+    
+    @StateObject private var viewModel: CocktailViewModel
+    private let cocktailService: CocktailService
+    
+    init(cocktailService: CocktailService) {
+        self.cocktailService = cocktailService
+        _viewModel = StateObject(wrappedValue: CocktailViewModel(cocktailService: cocktailService))
+    }
+    
+    private let columns: [GridItem] = [
+        GridItem(.flexible()),
+        GridItem(.flexible())
+    ]
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            VStack {
+                if viewModel.cocktails.isEmpty {
+                    ProgressView()
+                        .padding()
+                } else {
+                    ScrollView {
+                        LazyVGrid(columns: columns) {
+                            ForEach($viewModel.cocktails) { $cocktail in
+                                CocktailItem(cocktail: $cocktail)
+                            }
+                        }
+                    }
+                    .padding()
+                }
+            }
+            
+            .task {
+                await viewModel.fetchCocktails()
+            }
+        }
     }
 }
 
 #Preview {
-    CocktailsGridView()
+    CocktailsGridView(cocktailService: CocktailService())
 }

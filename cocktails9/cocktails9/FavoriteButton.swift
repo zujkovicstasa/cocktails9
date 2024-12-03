@@ -1,30 +1,20 @@
-//
-//  FavoriteButton.swift
-//  cocktails9
-//
-//  Created by Stasa Zujkovic on 2.12.24..
-//
-
 import SwiftUI
 
 struct FavoriteButton: View {
     
-    @Binding var isSet: Bool
+    @Binding var isFavorite: Bool
     
     var body: some View {
-        
         Button {
-            isSet.toggle()
-            
+            isFavorite.toggle()  // Toggle favorite state
         } label: {
-            Label("Toggle Favorite", systemImage: isSet ? "star.fill" : "star")
+            Label("Toggle Favorite", systemImage: isFavorite ? "star.fill" : "star")
                 .labelStyle(.iconOnly)
-                .foregroundStyle(isSet ? .yellow : .gray)
+                .foregroundStyle(isFavorite ? .yellow : .gray)
         }
-        
     }
 }
 
 #Preview {
-    FavoriteButton(isSet: .constant(true))
+    FavoriteButton(isFavorite: .constant(true))
 }
