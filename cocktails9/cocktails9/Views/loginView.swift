@@ -7,7 +7,7 @@ struct LoginView: View {
     @State private var password = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @State private var navigateToGrid = false
+    @State private var navigateToHome = false
     
     var body: some View {
         NavigationView {
@@ -81,7 +81,7 @@ struct LoginView: View {
                     currentImage = (currentImage == "loginbw2") ? "loginclr2" : "loginbw2"
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    navigateToGrid = true
+                    navigateToHome = true
                 }
                 
             } else {
