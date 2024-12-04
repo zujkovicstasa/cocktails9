@@ -1,5 +1,5 @@
 //
-//  UserManagement.swift
+//  UserManagment.swift
 //  cocktails9
 //
 //  Created by Stasa Zujkovic on 2.12.24..
@@ -34,4 +34,3 @@ class UserManagement {
         return nil
     }
 }
-
