@@ -3,7 +3,14 @@ import SwiftUI
 struct CocktailItem: View {
     
     @ObservedObject var viewModel: CocktailViewModel
+    @State private var isFavorite: Bool // Local state for isFavorite
     let cocktail: Cocktail
+    
+    init(viewModel: CocktailViewModel, cocktail: Cocktail) {
+        self.viewModel = viewModel
+        self.cocktail = cocktail
+        _isFavorite = State(initialValue: cocktail.isFavorite) // Initialize the state with cocktail's favorite status
+    }
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -31,7 +38,8 @@ struct CocktailItem: View {
                     .lineLimit(1)
                     .truncationMode(.tail)
                 
-                FavoriteButton(isFavorite: .constant(cocktail.isFavorite)) {
+               
+                FavoriteButton(isFavorite: $isFavorite) {
                     viewModel.toggleFavorite(cocktail: cocktail)
                 }
             }

@@ -13,6 +13,15 @@ class UserManagement {
     
     private init() {}
     
+    private var defaultUser: User? {
+            let fakeUser = User(
+                email: "test@example.com",
+                password: "test123", // You can change this as needed
+                favoriteCocktails: [] // Start with an empty list of favorite cocktails or load them from UserDefaults
+            )
+            return fakeUser
+        }
+    
     func saveUser(_ user: User) {
         let encoder = JSONEncoder()
         if let encoded = try? encoder.encode(user) {

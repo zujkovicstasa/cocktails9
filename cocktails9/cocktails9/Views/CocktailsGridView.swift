@@ -4,6 +4,9 @@ struct CocktailsGridView: View {
     
     @StateObject private var viewModel: CocktailViewModel
     private let cocktailService: CocktailService
+    @State private var isFilterPresented = false
+    @State private var searchText = ""
+    @State private var showSearchField = false
     
     init(cocktailService: CocktailService) {
         self.cocktailService = cocktailService
@@ -16,25 +19,52 @@ struct CocktailsGridView: View {
     ]
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack {
-                if viewModel.cocktails.isEmpty {
-                    ProgressView()
-                        .padding()
-                } else {
-                    ScrollView {
-                        LazyVGrid(columns: columns) {
-                            ForEach(viewModel.cocktails) { cocktail in
-                                CocktailItem(cocktail: cocktail)
-                            }
+                HStack {
+                    // Search Button and TextField
+                    Button(action: {
+                        withAnimation {
+                            showSearchField.toggle() // Toggle search text field visibility
+                        }
+                    }) {
+                        Image(systemName: "magnifyingglass")
+                            .padding()
+                            .foregroundColor(.black)
+                    }
+                    
+                    if showSearchField {
+                        TextField("Search", text: $searchText)
+                            .padding()
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                    }
+                    
+                    // Filter Button
+                    Button(action: {
+                        isFilterPresented.toggle()
+                    }) {
+                        Image(systemName: "line.horizontal.3.decrease.circle")
+                            .padding()
+                            .foregroundColor(.black)
+                    }
+                }
+                //.padding()
+                
+                // Show list of cocktails
+                ScrollView {
+                    LazyVGrid(columns: columns) {
+                        ForEach(viewModel.cocktails, id: \.id) { cocktail in
+                            CocktailItem(viewModel: viewModel, cocktail: cocktail)
                         }
                     }
                     .padding()
                 }
             }
-            
+            .sheet(isPresented: $isFilterPresented) {
+                FilterView(cocktailViewModel: viewModel)
+            }
             .task {
-                await viewModel.getCocktails()
+                await viewModel.getCocktails() // Initial fetch when the view appears
             }
         }
     }
