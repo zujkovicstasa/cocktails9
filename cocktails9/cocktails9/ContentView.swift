@@ -1,12 +1,12 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var navigateToMain = false
+    @State private var navigateToLogin = false
     
     var body: some View {
-        SplashView(navigateToMain: $navigateToMain)
-            .fullScreenCover(isPresented: $navigateToMain) {
-                MainContentView()
+        SplashView(navigateToLogin: $navigateToLogin)
+            .fullScreenCover(isPresented: $navigateToLogin) {
+                LoginView()
             }
     }
 }

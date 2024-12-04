@@ -39,9 +39,7 @@ struct LoginView: View {
                         .cornerRadius(8)
                 }
 
-                NavigationLink(destination: Text("Registration Coming Soon!")
-                    .font(.title)
-                    .foregroundColor(.gray)
+                NavigationLink(destination: RegisterView()
                     ){
                         
                     Text("Register")

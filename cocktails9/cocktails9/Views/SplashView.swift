@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SplashView: View {
-    @Binding var navigateToMain: Bool
+    @Binding var navigateToLogin: Bool
     @State private var progress: CGFloat = 0.0
     
     var body: some View {
@@ -32,7 +32,7 @@ struct SplashView: View {
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                navigateToMain = true
+                navigateToLogin = true
             }
         }
     }

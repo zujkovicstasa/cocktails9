@@ -16,6 +16,7 @@ struct RegisterView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var navigateToHome = false
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         
@@ -35,15 +36,15 @@ struct RegisterView: View {
                 TextField("Email", text: $email)
                     .keyboardType(.emailAddress)
                     .autocapitalization(.none)
-                    .textFieldStyle(CustomTextFieldStyleWithIcon(icon:"at"))
+                    .textFieldStyle(CustomTextFieldStyle(icon:"at"))
                 
                 // Password
                 SecureField("Password", text: $password)
-                    .textFieldStyle(CustomTextFieldStyleWithIcon(icon: "lock"))
+                    .textFieldStyle(CustomTextFieldStyle(icon: "lock"))
                 
                 // Repeat Password
                 SecureField("Repeat Password", text: $repeatPassword)
-                    .textFieldStyle(CustomTextFieldStyleWithIcon(icon: "lock"))
+                    .textFieldStyle(CustomTextFieldStyle(icon: "lock"))
                 
                 
                 // Register Button
@@ -74,7 +75,7 @@ struct RegisterView: View {
                     .font(.body)
                 
                 
-                NavigationLink(destination: Text("Login Page")) {
+                Button(action: { dismiss() }) {
                     Text("Login")
                         .font(.body)
                         .fontWeight(.bold)
@@ -85,6 +86,7 @@ struct RegisterView: View {
         .alert(isPresented: $showAlert) {
             Alert(title: Text("Message"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
+            .navigationBarBackButtonHidden(true)
     }
     
     private func handleRegister() {
