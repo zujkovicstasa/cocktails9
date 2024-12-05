@@ -20,7 +20,7 @@ struct RegisterView: View {
     
     var body: some View {
         
-        VStack {
+        NavigationStack() {
             VStack(spacing: 15) {
                 Spacer(minLength: 0)
                 
@@ -56,6 +56,9 @@ struct RegisterView: View {
                         .background(Color("register_color"))
                         .cornerRadius(8)
                 }
+                NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
+                    EmptyView() // Hidden NavigationLink
+                }
                 
                 Image(currentImage)
                     .resizable()
@@ -83,10 +86,11 @@ struct RegisterView: View {
                 }
             }
             .padding(.bottom,10)        }
-        .alert(isPresented: $showAlert) {
-            Alert(title: Text("Message"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Message"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
             .navigationBarBackButtonHidden(true)
+            
     }
     
     private func handleRegister() {
@@ -118,10 +122,11 @@ struct RegisterView: View {
         withAnimation {
             currentImage = (currentImage == "registerbw") ? "registerclr" : "registerbw"
         }
-                        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             navigateToHome = true
         }
+                        
+        
     }
 }
 

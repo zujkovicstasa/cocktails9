@@ -38,6 +38,9 @@ struct LoginView: View {
                         .background(Color("login_color"))
                         .cornerRadius(8)
                 }
+                NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
+                    EmptyView() // Hidden NavigationLink
+                }
 
                 NavigationLink(destination: RegisterView()
                     ){
@@ -60,7 +63,6 @@ struct LoginView: View {
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Login Failed"), message: Text("Invalid email or password"), dismissButton: .default(Text("OK")))
             }
-            
         }
     }
     
@@ -77,10 +79,12 @@ struct LoginView: View {
             if storedUser.password == password {
                 withAnimation {
                     currentImage = (currentImage == "loginbw2") ? "loginclr2" : "loginbw2"
+                    
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     navigateToHome = true
                 }
+                
                 
             } else {
                 alertMessage = "Incorrect password."
