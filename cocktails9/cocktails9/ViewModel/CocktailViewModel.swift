@@ -16,17 +16,6 @@ class CocktailViewModel: ObservableObject {
     private let cocktailService: CocktailService
     private var user: User?
     
-    @Published var selectedCategory: String = ""
-    @Published var selectedGlass: String = ""
-    @Published var selectedIngredient: String = ""
-    @Published var firstLetter: String = ""
-    @Published var isAlcoholic: String = "Alcoholic"
-    
-    @Published var categories: [String] = []
-    @Published var alcoholicOptions: [String] = []
-    @Published var ingredients: [String] = []
-    @Published var glasses: [String] = []
-    
     private var cancellables = Set<AnyCancellable>()
         
     
@@ -48,65 +37,7 @@ class CocktailViewModel: ObservableObject {
             print("Error fetching cocktails: \(error)")
         }
     }
-    
-    func fetchCategories() {
-            // Replace this with your actual API endpoint for categories
-            let url = URL(string: "https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list")!
-            
-            URLSession.shared.dataTaskPublisher(for: url)
-                .map { $0.data }
-                .decode(type: [String].self, decoder: JSONDecoder())
-                .receive(on: DispatchQueue.main)
-                .sink(receiveCompletion: { _ in }, receiveValue: { categories in
-                    self.categories = categories
-                })
-                .store(in: &cancellables)
-        }
         
-    func fetchAlcoholicOptions() {
-        // Replace this with your actual API endpoint for alcoholic options
-        let url = URL(string: "https://www.thecocktaildb.com/api/json/v1/1/list.php?a=list")!
-        
-        URLSession.shared.dataTaskPublisher(for: url)
-            .map { $0.data }
-            .decode(type: [String].self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { _ in }, receiveValue: { options in
-                self.alcoholicOptions = options
-            })
-            .store(in: &cancellables)
-    }
-        
-    func fetchIngredients() {
-        // Replace this with your actual API endpoint for ingredients
-        let url = URL(string: "https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list")!
-        
-        URLSession.shared.dataTaskPublisher(for: url)
-            .map { $0.data }
-            .decode(type: [String].self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { _ in }, receiveValue: { ingredients in
-                self.ingredients = ingredients
-            })
-            .store(in: &cancellables)
-    }
-    
-    func fetchGlasses() {
-        // Replace this with your actual API endpoint for glasses
-        let url = URL(string: "https://www.thecocktaildb.com/api/json/v1/1/list.php?g=list")!
-        
-        URLSession.shared.dataTaskPublisher(for: url)
-            .map { $0.data }
-            .decode(type: [String].self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { _ in }, receiveValue: { glasses in
-                self.glasses = glasses
-            })
-            .store(in: &cancellables)
-    }
-        
-        
-    
     func applyFilter(filterType: FilterType, value: String) {
         // Construct the URL with the selected filter
         var urlString = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?"

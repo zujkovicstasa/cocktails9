@@ -1,23 +1,26 @@
+
+import Foundation
 import SwiftUI
 
 struct CocktailsGridView: View {
-    
     @StateObject private var viewModel: CocktailViewModel
+    @StateObject private var filterViewModel: FiltersViewModel
     private let cocktailService: CocktailService
     @State private var isFilterPresented = false
     @State private var searchText = ""
     @State private var showSearchField = false
-    
+
     init(cocktailService: CocktailService) {
         self.cocktailService = cocktailService
         _viewModel = StateObject(wrappedValue: CocktailViewModel(cocktailService: cocktailService))
+        _filterViewModel = StateObject(wrappedValue: FiltersViewModel())
     }
-    
+
     private let columns: [GridItem] = [
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
-    
+
     var body: some View {
         NavigationView {
             VStack {
@@ -25,20 +28,20 @@ struct CocktailsGridView: View {
                     // Search Button and TextField
                     Button(action: {
                         withAnimation {
-                            showSearchField.toggle() // Toggle search text field visibility
+                            showSearchField.toggle()
                         }
                     }) {
                         Image(systemName: "magnifyingglass")
                             .padding()
                             .foregroundColor(.black)
                     }
-                    
+
                     if showSearchField {
                         TextField("Search", text: $searchText)
                             .padding()
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                     }
-                    
+
                     // Filter Button
                     Button(action: {
                         isFilterPresented.toggle()
@@ -48,8 +51,7 @@ struct CocktailsGridView: View {
                             .foregroundColor(.black)
                     }
                 }
-                //.padding()
-                
+
                 // Show list of cocktails
                 ScrollView {
                     LazyVGrid(columns: columns) {
@@ -61,7 +63,7 @@ struct CocktailsGridView: View {
                 }
             }
             .sheet(isPresented: $isFilterPresented) {
-                FilterView(cocktailViewModel: viewModel)
+                FilterView(viewModel: filterViewModel, applyFilter: viewModel.applyFilter) // Pass applyFilter method to FilterView
             }
             .task {
                 await viewModel.getCocktails() // Initial fetch when the view appears
