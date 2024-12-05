@@ -7,7 +7,7 @@ struct LoginView: View {
     @State private var password = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @State private var navigateToHome = false
+    @State private var navigateToMain = false
     
     var body: some View {
         NavigationView {
@@ -38,8 +38,8 @@ struct LoginView: View {
                         .background(Color("login_color"))
                         .cornerRadius(8)
                 }
-                NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
-                    EmptyView() // Hidden NavigationLink
+                NavigationLink(destination: MainTabView(), isActive: $navigateToMain) {
+                    EmptyView()
                 }
 
                 NavigationLink(destination: RegisterView()
@@ -82,7 +82,7 @@ struct LoginView: View {
                     
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    navigateToHome = true
+                    navigateToMain = true
                 }
                 
                 

@@ -6,7 +6,7 @@ struct SplashView: View {
     
     var body: some View {
         ZStack {
-            Color(red: 0.701, green: 0.854, blue: 0.99)
+            Color(Color("splashColor"))
                 .edgesIgnoringSafeArea(.all)
             
             // First image (black and white)

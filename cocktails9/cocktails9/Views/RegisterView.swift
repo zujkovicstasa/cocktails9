@@ -15,7 +15,7 @@ struct RegisterView: View {
     @State private var repeatPassword = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @State private var navigateToHome = false
+    @State private var navigateToMain = false
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -56,7 +56,7 @@ struct RegisterView: View {
                         .background(Color("register_color"))
                         .cornerRadius(8)
                 }
-                NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
+                NavigationLink(destination: MainTabView(), isActive: $navigateToMain) {
                     EmptyView() // Hidden NavigationLink
                 }
                 
@@ -123,7 +123,7 @@ struct RegisterView: View {
             currentImage = (currentImage == "registerbw") ? "registerclr" : "registerbw"
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            navigateToHome = true
+            navigateToMain = true
         }
                         
         
