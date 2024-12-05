@@ -3,21 +3,15 @@ import Foundation
 import SwiftUI
 import Combine
 
-enum FilterType {
-    case category
-    case alcoholic
-    case ingredient
-    case glass
-    
-}
 class CocktailViewModel: ObservableObject {
     
     @Published var cocktails: [Cocktail] = []
     private let cocktailService: CocktailService
     private var user: User?
+    @Published var activeFilter: (type: FilterType, value: String)? // Single active filter
     
     private var cancellables = Set<AnyCancellable>()
-        
+    
     
     init(cocktailService: CocktailService) {
         self.cocktailService = cocktailService
@@ -37,11 +31,13 @@ class CocktailViewModel: ObservableObject {
             print("Error fetching cocktails: \(error)")
         }
     }
-        
+    
     func applyFilter(filterType: FilterType, value: String) {
+        // Update the active filter
+        activeFilter = (type: filterType, value: value)
+        
         // Construct the URL with the selected filter
         var urlString = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?"
-        
         switch filterType {
         case .category:
             urlString += "c=\(value)"
@@ -58,10 +54,27 @@ class CocktailViewModel: ObservableObject {
             Task {
                 do {
                     let response = try await cocktailService.fetchCocktailsWithFilters(url: encodedUrlString)
-                    cocktails = response.drinks
+                    DispatchQueue.main.async {
+                        self.cocktails = response.drinks
+                    }
                 } catch {
                     print("Error fetching filtered cocktails: \(error)")
                 }
+            }
+        }
+    }
+    
+    func clearFilter() {
+        activeFilter = nil
+        // Optionally reset cocktails or fetch all cocktails here
+        Task {
+            do {
+                let fetchedCocktails = try await cocktailService.fetchCocktailsAsync()
+                DispatchQueue.main.async {
+                    self.cocktails = fetchedCocktails
+                }
+            } catch {
+                print("Error fetching cocktails: \(error)")
             }
         }
     }

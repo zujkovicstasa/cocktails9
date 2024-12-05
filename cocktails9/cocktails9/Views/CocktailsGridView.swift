@@ -1,19 +1,21 @@
-
 import Foundation
 import SwiftUI
 
 struct CocktailsGridView: View {
+    
     @StateObject private var viewModel: CocktailViewModel
     @StateObject private var filterViewModel: FiltersViewModel
     private let cocktailService: CocktailService
+    private let filterService: FilterService // Add this property
     @State private var isFilterPresented = false
     @State private var searchText = ""
     @State private var showSearchField = false
 
-    init(cocktailService: CocktailService) {
+    init(cocktailService: CocktailService, filterService: FilterService) {
         self.cocktailService = cocktailService
+        self.filterService = filterService // Initialize filterService here
         _viewModel = StateObject(wrappedValue: CocktailViewModel(cocktailService: cocktailService))
-        _filterViewModel = StateObject(wrappedValue: FiltersViewModel())
+        _filterViewModel = StateObject(wrappedValue: FiltersViewModel(filterService: filterService)) // Pass filterService to FiltersViewModel
     }
 
     private let columns: [GridItem] = [
@@ -63,15 +65,15 @@ struct CocktailsGridView: View {
                 }
             }
             .sheet(isPresented: $isFilterPresented) {
-                FilterView(viewModel: filterViewModel, applyFilter: viewModel.applyFilter) // Pass applyFilter method to FilterView
+                FilterView(filterViewModel: filterViewModel, cocktailViewModel: viewModel)
             }
             .task {
-                await viewModel.getCocktails() // Initial fetch when the view appears
+                await viewModel.getCocktails()
             }
         }
     }
 }
 
 #Preview {
-    CocktailsGridView(cocktailService: CocktailService())
+    CocktailsGridView(cocktailService: CocktailService(), filterService: FilterService()) // Pass the filterService instance here
 }

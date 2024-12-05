@@ -1,58 +1,113 @@
+
+import Foundation
 import SwiftUI
 
+enum FilterType {
+    case category
+    case alcoholic
+    case ingredient
+    case glass
+    
+}
+
 struct FilterView: View {
-    @ObservedObject var viewModel: FiltersViewModel
-    var applyFilter: (FilterType, String) -> Void
+    @ObservedObject var filterViewModel: FiltersViewModel
+    @ObservedObject var cocktailViewModel: CocktailViewModel
 
     var body: some View {
         NavigationView {
             List {
-                Section(header: Text("Categories")) {
-                    ForEach(viewModel.categories, id: \.self) { category in
-                        Button(action: {
-                            applyFilter(.category, category) // Apply category filter
-                        }) {
-                            Text(category)
+                // Navigation for Categories
+                NavigationLink(
+                    destination: FilterDetailView(
+                        filterType: .category,
+                        data: filterViewModel.categories,
+                        cocktailViewModel: cocktailViewModel
+                    )
+                ) {
+                    Text("Categories")
+                        .onAppear {
+                            Task {
+                                await filterViewModel.fetchCategories()
+                            }
                         }
-                    }
                 }
 
-                Section(header: Text("Alcoholic")) {
-                    ForEach(viewModel.alcoholicOptions, id: \.self) { option in
-                        Button(action: {
-                            applyFilter(.alcoholic, option) // Apply alcoholic filter
-                        }) {
-                            Text(option)
+                // Navigation for Alcoholic Options
+                NavigationLink(
+                    destination: FilterDetailView(
+                        filterType: .alcoholic,
+                        data: filterViewModel.alcoholicOptions,
+                        cocktailViewModel: cocktailViewModel
+                    )
+                ) {
+                    Text("Alcoholic Options")
+                        .onAppear {
+                            Task {
+                                await filterViewModel.fetchAlcoholicOptions()
+                            }
                         }
-                    }
                 }
 
-                Section(header: Text("Ingredients")) {
-                    ForEach(viewModel.ingredients, id: \.self) { ingredient in
-                        Button(action: {
-                            applyFilter(.ingredient, ingredient) // Apply ingredient filter
-                        }) {
-                            Text(ingredient)
+                // Navigation for Ingredients
+                NavigationLink(
+                    destination: FilterDetailView(
+                        filterType: .ingredient,
+                        data: filterViewModel.ingredients,
+                        cocktailViewModel: cocktailViewModel
+                    )
+                ) {
+                    Text("Ingredients")
+                        .onAppear {
+                            Task {
+                                await filterViewModel.fetchIngredients()
+                            }
                         }
-                    }
                 }
 
-                Section(header: Text("Glasses")) {
-                    ForEach(viewModel.glasses, id: \.self) { glass in
-                        Button(action: {
-                            applyFilter(.glass, glass) // Apply glass filter
-                        }) {
-                            Text(glass)
+                // Navigation for Glasses
+                NavigationLink(
+                    destination: FilterDetailView(
+                        filterType: .glass,
+                        data: filterViewModel.glasses,
+                        cocktailViewModel: cocktailViewModel
+                    )
+                ) {
+                    Text("Glasses")
+                        .onAppear {
+                            Task {
+                                await filterViewModel.fetchGlasses()
+                            }
                         }
-                    }
                 }
             }
-            .onAppear {
-                viewModel.fetchCategories()
-                viewModel.fetchAlcoholicOptions()
-                viewModel.fetchIngredients()
-                viewModel.fetchGlasses()
-            }
+            .navigationTitle("Filters")
+        }
+    }
+
+    private func fetchData(for filterType: FilterType) -> [String] {
+        switch filterType {
+        case .category:
+            return filterViewModel.categories
+        case .alcoholic:
+            return filterViewModel.alcoholicOptions
+        case .ingredient:
+            return filterViewModel.ingredients
+        case .glass:
+            return filterViewModel.glasses
+        }
+    }
+
+    private func filterTitle(for filterType: FilterType) -> String {
+        switch filterType {
+        case .category:
+            return "Categories"
+        case .alcoholic:
+            return "Alcoholic Options"
+        case .ingredient:
+            return "Ingredients"
+        case .glass:
+            return "Glasses"
         }
     }
 }
