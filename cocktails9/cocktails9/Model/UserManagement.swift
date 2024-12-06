@@ -1,8 +1,6 @@
-
 import Foundation
 
 struct User: Codable {
-    
     var email: String
     var password: String
     var favoriteCocktails: [Cocktail]
@@ -24,14 +22,13 @@ class UserManagement {
         )
     }
 
-    
     func saveUser(_ user: User) {
         let encoder = JSONEncoder()
         if let encoded = try? encoder.encode(user) {
             UserDefaults.standard.set(encoded, forKey: "user-\(user.email)")
         }
     }
-
+    
     func getUser(byEmail email: String) -> User? {
         if let savedUserData = UserDefaults.standard.data(forKey: "user-\(email)") {
             let decoder = JSONDecoder()
@@ -41,7 +38,6 @@ class UserManagement {
         }
         return nil
     }
-
     func mockLogin(email: String) {
         if var user = getUser(byEmail: email) {
             UserDefaults.standard.set(email, forKey: loggedInUserKey)
