@@ -17,74 +17,62 @@ struct FilterView: View {
     var body: some View {
         NavigationView {
             List {
-                // Navigation for Categories
-                NavigationLink(
-                    destination: FilterDetailView(
+                Section(header: Text("Filter Options").font(.headline)) {
+                    // Navigation for Categories
+                    NavigationLink(destination: FilterDetailView(
                         filterType: .category,
                         data: filterViewModel.categories,
                         cocktailViewModel: cocktailViewModel
-                    )
-                ) {
-                    Text("Categories")
-                        .onAppear {
-                            Task {
-                                await filterViewModel.fetchCategories()
-                            }
-                        }
-                }
+                    )) {
+                        Label("Categories", systemImage: "list.bullet")
+                        
+                    }
+                    .task {
+                        await filterViewModel.fetchCategories()
+                    }
 
-                // Navigation for Alcoholic Options
-                NavigationLink(
-                    destination: FilterDetailView(
+                    // Navigation for Alcoholic Options
+                    NavigationLink(destination: FilterDetailView(
                         filterType: .alcoholic,
                         data: filterViewModel.alcoholicOptions,
                         cocktailViewModel: cocktailViewModel
-                    )
-                ) {
-                    Text("Alcoholic Options")
-                        .onAppear {
-                            Task {
-                                await filterViewModel.fetchAlcoholicOptions()
-                            }
-                        }
-                }
+                    )) {
+                        Label("Alcoholic Options", systemImage: "waterbottle")
+                    }
+                    .task {
+                        await filterViewModel.fetchAlcoholicOptions()
+                    }
 
-                // Navigation for Ingredients
-                NavigationLink(
-                    destination: FilterDetailView(
+                    // Navigation for Ingredients
+                    NavigationLink(destination: FilterDetailView(
                         filterType: .ingredient,
                         data: filterViewModel.ingredients,
                         cocktailViewModel: cocktailViewModel
-                    )
-                ) {
-                    Text("Ingredients")
-                        .onAppear {
-                            Task {
-                                await filterViewModel.fetchIngredients()
-                            }
-                        }
-                }
+                    )) {
+                        Label("Ingredients", systemImage: "basket")
+                    }
+                    .task {
+                        await filterViewModel.fetchIngredients()
+                    }
 
-                // Navigation for Glasses
-                NavigationLink(
-                    destination: FilterDetailView(
+                    // Navigation for Glasses
+                    NavigationLink(destination: FilterDetailView(
                         filterType: .glass,
                         data: filterViewModel.glasses,
                         cocktailViewModel: cocktailViewModel
-                    )
-                ) {
-                    Text("Glasses")
-                        .onAppear {
-                            Task {
-                                await filterViewModel.fetchGlasses()
-                            }
-                        }
+                    )) {
+                        Label("Glasses", systemImage: "wineglass")
+                    }
+                    .task {
+                        await filterViewModel.fetchGlasses()
+                    }
                 }
             }
+            .listStyle(InsetGroupedListStyle()) // Modern grouped style
             .navigationTitle("Filters")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
-
     private func fetchData(for filterType: FilterType) -> [String] {
         switch filterType {
         case .category:

@@ -7,18 +7,19 @@ class CocktailViewModel: ObservableObject {
     
     @Published var cocktails: [Cocktail] = []
     private let cocktailService: CocktailService
-    private var user: User?
-    @Published var activeFilter: (type: FilterType, value: String)? // Single active filter
     
-    private var cancellables = Set<AnyCancellable>()
+    private var user: User?
+    @Published var activeFilter: (type: FilterType, value: String)?
+    
     
     
     init(cocktailService: CocktailService) {
         self.cocktailService = cocktailService
-        if let currentUser = UserManagement.shared.getUser(byEmail: "test@gmail.com") {
-            self.user = currentUser
+        UserManagement.shared.mockLogin(email: "test@example.com")
+        if let currentUser = UserManagement.shared.getLoggedInUser() {
+           self.user = currentUser
         }
-    }
+   }
     
     func getCocktails() async {
         do {
@@ -66,7 +67,6 @@ class CocktailViewModel: ObservableObject {
     
     func clearFilter() {
         activeFilter = nil
-        // Optionally reset cocktails or fetch all cocktails here
         Task {
             do {
                 let fetchedCocktails = try await cocktailService.fetchCocktailsAsync()
@@ -89,27 +89,37 @@ class CocktailViewModel: ObservableObject {
         }
     
     func toggleFavorite(cocktail: Cocktail) {
-        guard var user = user else { return }
-        
-        var updatedCocktail = cocktail
-        updatedCocktail.isFavorite.toggle()
-        
-        // Toggle the favorite status of the cocktail in the user's favorites
-        if updatedCocktail.isFavorite {
-            if !user.favoriteCocktails.contains(where: { $0.id == updatedCocktail.id }) {
-                user.favoriteCocktails.append(updatedCocktail)
-            }
-        } else {
-            user.favoriteCocktails.removeAll { $0.id == updatedCocktail.id }
+        // Fetch the current user
+        guard var currentUser = UserManagement.shared.getLoggedInUser() else {
+            print("No logged-in user found.")
+            return
         }
         
-        // Update the user data in UserDefaults
-        UserManagement.shared.updateFavorites(forEmail: user.email, favorites: user.favoriteCocktails)
+        // Create a copy of the cocktail and toggle its favorite status
+        var updatedCocktail = cocktail
+        updatedCocktail.isFavorite.toggle()
+
+        // Update the user's favorite cocktails
+        if updatedCocktail.isFavorite {
+            // Add to favorites if not already present
+            if !currentUser.favoriteCocktails.contains(where: { $0.id == updatedCocktail.id }) {
+                currentUser.favoriteCocktails.append(updatedCocktail) // Add the cocktail to favorites
+            }
+        } else {
+            // Remove from favorites
+            currentUser.favoriteCocktails.removeAll { $0.id == updatedCocktail.id }
+        }
+
+        // Save the updated user data
+        UserManagement.shared.saveUser(currentUser)
         
         // Update the cocktails list with the new favorite status
         if let index = cocktails.firstIndex(where: { $0.id == cocktail.id }) {
             cocktails[index] = updatedCocktail
         }
+
+        print("Updated favorites for \(currentUser.email): \(currentUser.favoriteCocktails.map { $0.name })")
     }
+
 
 }

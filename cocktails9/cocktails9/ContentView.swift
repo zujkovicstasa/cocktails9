@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    let cocktailService = CocktailService()
+    let filterService = FilterService()
+    
     var body: some View {
-        let cocktailService = CocktailService()
-        let filterService = FilterService()
         CocktailsGridView(cocktailService: cocktailService, filterService: filterService)
     }
 }
