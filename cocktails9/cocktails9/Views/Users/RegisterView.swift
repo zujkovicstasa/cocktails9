@@ -16,6 +16,9 @@ struct RegisterView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var navigateToMain = false
+    let cocktailService: CocktailService
+    let filterService: FilterService
+    @State private var favoriteCocktails: [Cocktail] = []
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -56,7 +59,7 @@ struct RegisterView: View {
                         .background(Color("register_color"))
                         .cornerRadius(8)
                 }
-                NavigationLink(destination: MainTabView(), isActive: $navigateToMain) {
+                NavigationLink(destination: MainTabView(cocktailService: CocktailService(), filterService: FilterService()), isActive: $navigateToMain) {
                     EmptyView() // Hidden NavigationLink
                 }
                 
@@ -114,16 +117,18 @@ struct RegisterView: View {
                 return
             }
 
-            let newUser = User(email: email, password: password)
+        let newUser = User(email: email, password: password, favoriteCocktails: [])
             
         UserManagement.shared.saveUser(newUser)
-
         
+        UserManagement.shared.setLoggedInUser(email: email)
+
         withAnimation {
             currentImage = (currentImage == "registerbw") ? "registerclr" : "registerbw"
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             navigateToMain = true
+            CocktailViewModel(cocktailService: cocktailService).updateLoggedInUser()
         }
                         
         
@@ -131,5 +136,5 @@ struct RegisterView: View {
 }
 
 #Preview {
-    RegisterView()
+    RegisterView(cocktailService: CocktailService(), filterService: FilterService())
 }

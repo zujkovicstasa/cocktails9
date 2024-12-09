@@ -12,22 +12,10 @@ class UserManagement {
     private init() {}
     
     private let loggedInUserKey = "loggedInUserEmail"
-
     
-    private var defaultUser: User {
-        return User(
-            email: "test@example.com",
-            password: "test123",
-            favoriteCocktails: []
-        )
-    }
-
-    func saveUser(_ user: User) {
-        let encoder = JSONEncoder()
-        if let encoded = try? encoder.encode(user) {
-            UserDefaults.standard.set(encoded, forKey: "user-\(user.email)")
+    func setLoggedInUser(email: String) {
+            UserDefaults.standard.set(email, forKey: loggedInUserKey)
         }
-    }
     
     func getUser(byEmail email: String) -> User? {
         if let savedUserData = UserDefaults.standard.data(forKey: "user-\(email)") {
@@ -38,17 +26,14 @@ class UserManagement {
         }
         return nil
     }
-    func mockLogin(email: String) {
-        if var user = getUser(byEmail: email) {
-            UserDefaults.standard.set(email, forKey: loggedInUserKey)
-        } else {
-            var newUser = self.defaultUser
-            newUser.email = email
-            saveUser(newUser)
-            UserDefaults.standard.set(email, forKey: loggedInUserKey)
+
+    func saveUser(_ user: User) {
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(user) {
+            UserDefaults.standard.set(encoded, forKey: "user-\(user.email)")
         }
     }
-
+    
     func logout() {
         UserDefaults.standard.removeObject(forKey: loggedInUserKey)
     }

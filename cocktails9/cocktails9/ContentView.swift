@@ -6,7 +6,7 @@ struct ContentView: View {
     var body: some View {
         SplashView(navigateToLogin: $navigateToLogin)
             .fullScreenCover(isPresented: $navigateToLogin) {
-                LoginView()
+                LoginView(cocktailService: CocktailService(), filterService: FilterService())
             }
     }
 }

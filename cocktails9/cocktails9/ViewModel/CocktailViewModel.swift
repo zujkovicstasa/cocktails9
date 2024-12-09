@@ -15,12 +15,27 @@ class CocktailViewModel: ObservableObject {
     
     init(cocktailService: CocktailService) {
         self.cocktailService = cocktailService
-        UserManagement.shared.mockLogin(email: "test@example.com")
         if let currentUser = UserManagement.shared.getLoggedInUser() {
            self.user = currentUser
         }
    }
     
+    var favoriteCocktails: [Cocktail] {
+            guard let user = user else { return [] }
+            return cocktails.filter { cocktail in
+                user.favoriteCocktails.contains { $0.id == cocktail.id }
+            }
+        }
+    
+    func updateLoggedInUser() {
+        if let currentUser = UserManagement.shared.getLoggedInUser() {
+            self.user = currentUser
+            self.loadFavorites()
+        } else {
+            self.user = nil
+        }
+    }
+
     func getCocktails() async {
         do {
             let fetchedCocktails = try await cocktailService.fetchCocktailsAsync()
@@ -89,19 +104,15 @@ class CocktailViewModel: ObservableObject {
         }
     
     func toggleFavorite(cocktail: Cocktail) {
-        // Fetch the current user
         guard var currentUser = UserManagement.shared.getLoggedInUser() else {
             print("No logged-in user found.")
             return
         }
         
-        // Create a copy of the cocktail and toggle its favorite status
         var updatedCocktail = cocktail
         updatedCocktail.isFavorite.toggle()
 
-        // Update the user's favorite cocktails
         if updatedCocktail.isFavorite {
-            // Add to favorites if not already present
             if !currentUser.favoriteCocktails.contains(where: { $0.id == updatedCocktail.id }) {
                 currentUser.favoriteCocktails.append(updatedCocktail) // Add the cocktail to favorites
             }
@@ -117,8 +128,8 @@ class CocktailViewModel: ObservableObject {
         if let index = cocktails.firstIndex(where: { $0.id == cocktail.id }) {
             cocktails[index] = updatedCocktail
         }
+        
 
-        print("Updated favorites for \(currentUser.email): \(currentUser.favoriteCocktails.map { $0.name })")
     }
 
 

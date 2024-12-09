@@ -8,6 +8,8 @@ struct LoginView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var navigateToMain = false
+    let cocktailService: CocktailService
+    let filterService: FilterService
     
     var body: some View {
         NavigationView {
@@ -38,11 +40,11 @@ struct LoginView: View {
                         .background(Color("login_color"))
                         .cornerRadius(8)
                 }
-                NavigationLink(destination: MainTabView(), isActive: $navigateToMain) {
+                NavigationLink(destination: MainTabView(cocktailService: CocktailService(), filterService: FilterService()), isActive: $navigateToMain) {
                     EmptyView()
                 }
 
-                NavigationLink(destination: RegisterView()
+                NavigationLink(destination: RegisterView(cocktailService: CocktailService(), filterService: FilterService())
                     ){
                         
                     Text("Register")
@@ -77,13 +79,16 @@ struct LoginView: View {
         if let storedUser = UserManagement.shared.getUser(byEmail: email) {
             
             if storedUser.password == password {
+                UserManagement.shared.setLoggedInUser(email: email)
                 withAnimation {
                     currentImage = (currentImage == "loginbw2") ? "loginclr2" : "loginbw2"
                     
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     navigateToMain = true
+                    CocktailViewModel(cocktailService: cocktailService).updateLoggedInUser()
                 }
+
                 
                 
             } else {
@@ -99,5 +104,5 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView()
+    LoginView(cocktailService: CocktailService(), filterService: FilterService())
 }

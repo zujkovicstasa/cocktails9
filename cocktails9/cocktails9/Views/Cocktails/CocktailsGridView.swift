@@ -29,6 +29,13 @@ struct CocktailsGridView: View {
             VStack(spacing: 10) {
                 // Search and Filter Bar
                 HStack(spacing: 10) {
+                    Text("cocktails9")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                            .padding(.leading, 10)
+
+                    Spacer()
                     // Search Button
                     if showSearchField {
                         TextField("Search cocktails", text: $searchText)
