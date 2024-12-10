@@ -49,10 +49,9 @@ class CocktailViewModel: ObservableObject {
     }
     
     func applyFilter(filterType: FilterType, value: String) {
-        // Update the active filter
+     
         activeFilter = (type: filterType, value: value)
         
-        // Construct the URL with the selected filter
         var urlString = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?"
         switch filterType {
         case .category:
@@ -64,8 +63,7 @@ class CocktailViewModel: ObservableObject {
         case .glass:
             urlString += "g=\(value)"
         }
-        
-        // Fetch the cocktails with the selected filter
+
         if let encodedUrlString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
             Task {
                 do {
@@ -96,10 +94,8 @@ class CocktailViewModel: ObservableObject {
     
     func loadFavorites() {
             guard let user = user else { return }
-            // Update the favorite status of each cocktail based on the user's favorites
             for i in 0..<cocktails.count {
                 cocktails[i].isFavorite = user.favoriteCocktails.contains(where: { $0.id == cocktails[i].id })
-                print("Loaded favorites: \(user.favoriteCocktails)")
             }
         }
     
@@ -114,17 +110,15 @@ class CocktailViewModel: ObservableObject {
 
         if updatedCocktail.isFavorite {
             if !currentUser.favoriteCocktails.contains(where: { $0.id == updatedCocktail.id }) {
-                currentUser.favoriteCocktails.append(updatedCocktail) // Add the cocktail to favorites
+                currentUser.favoriteCocktails.append(updatedCocktail)
             }
         } else {
-            // Remove from favorites
+           
             currentUser.favoriteCocktails.removeAll { $0.id == updatedCocktail.id }
         }
-
-        // Save the updated user data
+        
         UserManagement.shared.saveUser(currentUser)
         
-        // Update the cocktails list with the new favorite status
         if let index = cocktails.firstIndex(where: { $0.id == cocktail.id }) {
             cocktails[index] = updatedCocktail
         }

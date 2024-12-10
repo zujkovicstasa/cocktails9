@@ -3,7 +3,7 @@ import Foundation
 class CocktailService {
     
     private let networkManager: NetworkManager
-    private let baseURL = "https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Alcoholic"
+    private let baseURL = "https://www.thecocktaildb.com/api/json/v1/1/"
     
     init(networkManager: NetworkManager = .shared) {
         self.networkManager = networkManager
@@ -15,7 +15,7 @@ class CocktailService {
     }
     
     func fetchCocktailsAsync() async throws -> [Cocktail] {
-        let response: CocktailResponse = try await networkManager.request(from: baseURL, type: CocktailResponse.self)
+        let response: CocktailResponse = try await networkManager.request(from: "\(baseURL)filter.php?a=Alcoholic", type: CocktailResponse.self)
         return response.drinks
     }
 }

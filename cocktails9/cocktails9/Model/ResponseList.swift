@@ -5,7 +5,7 @@ struct CategoriesResponse: Codable {
 }
 
 struct Category: Codable {
-    let strCategory: String
+    let category: String
 }
 
 struct AlcoholicOptionsResponse: Codable {
@@ -13,7 +13,7 @@ struct AlcoholicOptionsResponse: Codable {
 }
 
 struct AlcoholicOption: Codable {
-    let strAlcoholic: String
+    let alcoholic: String
 }
 
 struct IngredientsResponse: Codable {
@@ -21,7 +21,7 @@ struct IngredientsResponse: Codable {
 }
 
 struct Ingredient: Codable {
-    let strIngredient1: String
+    let ingredient1: String
 }
 
 struct GlassesResponse: Codable {
@@ -29,5 +29,5 @@ struct GlassesResponse: Codable {
 }
 
 struct Glass: Codable {
-    let strGlass: String
+    let glass: String
 }

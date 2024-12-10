@@ -98,10 +98,16 @@ struct CocktailsGridView: View {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 15) {
                             ForEach(viewModel.cocktails.filter { searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText) }, id: \.id) { cocktail in
-                                CocktailItem(viewModel: viewModel, cocktail: cocktail)
+                                NavigationLink{
+                                    
+                                    CocktailDetails()
+                                    
+                                } label: {
+                                    CocktailItem(viewModel: viewModel, cocktail: cocktail)
+                                }
                             }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
                     }
                 }
             }
