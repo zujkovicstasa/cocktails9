@@ -20,6 +20,7 @@ class FiltersViewModel: ObservableObject {
         do {
             categories = try await filterService.fetchCategories()
         } catch {
+            print("Full error details: \(error)")
             print("Failed to fetch categories: \(error)")
         }
         isLoading = false

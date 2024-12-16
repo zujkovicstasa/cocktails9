@@ -12,7 +12,6 @@ struct Cocktail: Codable, Identifiable {
     let id: String
     let name: String
     let imageURL: String
-    var isFavorite: Bool = false
     
     enum CodingKeys: String, CodingKey {
         case id = "idDrink"

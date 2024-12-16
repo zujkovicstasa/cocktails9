@@ -6,13 +6,12 @@ import Combine
 class CocktailViewModel: ObservableObject {
     
     @Published var cocktails: [Cocktail] = []
+    @Published var searchQuery: String = ""
     private let cocktailService: CocktailService
     
     private var user: User?
     @Published var activeFilter: (type: FilterType, value: String)?
-    
-    
-    
+      
     init(cocktailService: CocktailService) {
         self.cocktailService = cocktailService
         if let currentUser = UserManagement.shared.getLoggedInUser() {
@@ -21,11 +20,11 @@ class CocktailViewModel: ObservableObject {
    }
     
     var favoriteCocktails: [Cocktail] {
-            guard let user = user else { return [] }
-            return cocktails.filter { cocktail in
-                user.favoriteCocktails.contains { $0.id == cocktail.id }
-            }
+        guard let user = user else { return [] }
+        return cocktails.filter { cocktail in
+            user.favoriteCocktails.contains { $0.id == cocktail.id }
         }
+    }
     
     func updateLoggedInUser() {
         if let currentUser = UserManagement.shared.getLoggedInUser() {
@@ -93,38 +92,32 @@ class CocktailViewModel: ObservableObject {
     }
     
     func loadFavorites() {
-            guard let user = user else { return }
-            for i in 0..<cocktails.count {
-                cocktails[i].isFavorite = user.favoriteCocktails.contains(where: { $0.id == cocktails[i].id })
-            }
-        }
+        guard let user = UserManagement.shared.getLoggedInUser() else { return }
+        self.user = user
+    }
     
     func toggleFavorite(cocktail: Cocktail) {
-        guard var currentUser = UserManagement.shared.getLoggedInUser() else {
+        
+        guard let currentUser = UserManagement.shared.getLoggedInUser() else {
             print("No logged-in user found.")
             return
         }
-        
-        var updatedCocktail = cocktail
-        updatedCocktail.isFavorite.toggle()
 
-        if updatedCocktail.isFavorite {
-            if !currentUser.favoriteCocktails.contains(where: { $0.id == updatedCocktail.id }) {
-                currentUser.favoriteCocktails.append(updatedCocktail)
-            }
-        } else {
+        UserManagement.shared.updateFavorites(forLoggedInUserWith: cocktail)
            
-            currentUser.favoriteCocktails.removeAll { $0.id == updatedCocktail.id }
-        }
-        
-        UserManagement.shared.saveUser(currentUser)
-        
-        if let index = cocktails.firstIndex(where: { $0.id == cocktail.id }) {
-            cocktails[index] = updatedCocktail
-        }
-        
-
+       objectWillChange.send()
+       updateLoggedInUser()
     }
-
+    
+    func performSearch() async {
+        do {
+            let results = try await cocktailService.searchCocktails(query: searchQuery)
+            await MainActor.run {
+                self.cocktails = results
+            }
+        } catch {
+            print("Search failed: \(error)")
+        }
+    }
 
 }

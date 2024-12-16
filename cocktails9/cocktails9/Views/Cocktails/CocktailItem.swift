@@ -3,24 +3,27 @@ import SwiftUI
 struct CocktailItem: View {
     
     @ObservedObject var viewModel: CocktailViewModel
-    @State private var isFavorite: Bool // Local state for isFavorite
     let cocktail: Cocktail
+    @State private var isUpdating = false
+    
+    var isFavorite: Bool {
+            UserManagement.shared.getLoggedInUser()?.favoriteCocktails.contains(where: { $0.id == cocktail.id }) ?? false
+        }
     
     init(viewModel: CocktailViewModel, cocktail: Cocktail) {
         self.viewModel = viewModel
         self.cocktail = cocktail
-        _isFavorite = State(initialValue: cocktail.isFavorite) // Initialize the state with cocktail's favorite status
     }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            // Background Rectangle
+            
             RoundedRectangle(cornerRadius: 15)
                 .fill(Color(.systemBackground))
                 .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
 
             VStack(alignment: .leading, spacing: 8) {
-                // Cocktail Image
+            
                 ZStack(alignment: .topTrailing) {
                     AsyncImage(url: URL(string: cocktail.imageURL)) { phase in
                         if let image = phase.image {
@@ -40,8 +43,14 @@ struct CocktailItem: View {
                     .cornerRadius(15, corners: [.topLeft, .topRight])
 
                     // Favorite Button
-                    FavoriteButton(isFavorite: $isFavorite) {
-                        viewModel.toggleFavorite(cocktail: cocktail)
+                    FavoriteButton(isFavorite: isFavorite) {
+                        withAnimation {
+                            isUpdating = true
+                            viewModel.toggleFavorite(cocktail: cocktail)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                isUpdating = false
+                            }
+                        }
                     }
                     .padding(8)
                     .background(
@@ -83,20 +92,5 @@ struct RoundedCorner: Shape {
                                 byRoundingCorners: corners,
                                 cornerRadii: CGSize(width: radius, height: radius))
         return Path(path.cgPath)
-    }
-}
-struct CocktailItem_Previews: PreviewProvider {
-    static var previews: some View {
-        let mockCocktail = Cocktail(
-            id: "1",
-            name: "Mojito",
-            imageURL: "https://www.thecocktaildb.com/images/media/drink/3z6xdi1589574603.jpg",
-            isFavorite: false
-        )
-
-        let mockViewModel = CocktailViewModel(cocktailService: CocktailService())
-
-        CocktailItem(viewModel: mockViewModel, cocktail: mockCocktail)
-            .previewLayout(.sizeThatFits)
     }
 }

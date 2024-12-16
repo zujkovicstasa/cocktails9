@@ -20,11 +20,11 @@ struct MainTabView: View {
                     Group {
                         switch selectedTab {
                         case .cocktails:
-                            CocktailsGridView(cocktailService: CocktailService(), filterService: FilterService())
+                            CocktailsGridTab(cocktailService: cocktailService, filterService: filterService)
                         case .favorites:
-                            FavoritesView(cocktailService: CocktailService())
+                            FavoritesTab(cocktailService: cocktailService)
                         case .profile:
-                            ProfileView()
+                            ProfileTab()
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)

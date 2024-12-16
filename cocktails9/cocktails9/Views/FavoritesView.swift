@@ -10,12 +10,14 @@ import SwiftUI
 struct FavoritesView: View {
     
     @StateObject private var viewModel: CocktailViewModel
+    @StateObject private var viewDetailModel: CocktailDetailsViewModel
     private let cocktailService: CocktailService
     @State private var isLoading = true
     
     init(cocktailService: CocktailService) {
         self.cocktailService = cocktailService
         _viewModel = StateObject(wrappedValue: CocktailViewModel(cocktailService: cocktailService))
+        _viewDetailModel = StateObject(wrappedValue: CocktailDetailsViewModel(cocktailService: cocktailService))
     }
 
     private let columns: [GridItem] = [
@@ -51,9 +53,14 @@ struct FavoritesView: View {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 15) {
                             ForEach(viewModel.favoriteCocktails, id: \.id) { cocktail in
-                                CocktailItem(viewModel: viewModel, cocktail: cocktail)
-                                    .onTapGesture {
-                                    }
+                                NavigationLink{
+                                    
+                                    CocktailDetailsView(viewModel: viewDetailModel, cocktailID: cocktail.id)
+                                    
+                                } label: {
+                                    CocktailItem(viewModel: viewModel, cocktail: cocktail)
+                                        .foregroundColor(.primary)
+                                }
                             }
                         }
                         .padding(.horizontal)
@@ -68,6 +75,16 @@ struct FavoritesView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+}
+
+struct FavoritesTab: View {
+    let cocktailService: CocktailService
+
+    var body: some View {
+        NavigationStack {
+            FavoritesView(cocktailService: cocktailService)
         }
     }
 }

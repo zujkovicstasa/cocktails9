@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SplashView: View {
+    
     @Binding var navigateToLogin: Bool
     @State private var progress: CGFloat = 0.0
     

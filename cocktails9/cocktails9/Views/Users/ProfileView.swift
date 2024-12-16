@@ -14,6 +14,14 @@ struct ProfileView: View {
     }
 }
 
+struct ProfileTab: View {
+    var body: some View {
+        NavigationStack {
+            ProfileView()
+        }
+    }
+}
+
 #Preview {
     ProfileView()
 }

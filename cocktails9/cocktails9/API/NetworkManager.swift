@@ -16,12 +16,20 @@ class NetworkManager {
             throw NetworkingError.invalidUrl
         }
 
-        let (data, _) = try await URLSession.shared.data(from: url)
-        
         do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            // Print out the raw response for debugging
+            if let httpResponse = response as? HTTPURLResponse {
+                print("URL: \(absoluteURL)")
+                print("Status Code: \(httpResponse.statusCode)")
+                print("Response String: \(String(data: data, encoding: .utf8) ?? "Unable to convert to string")")
+            }
+            
             let decodedObject = try JSONDecoder().decode(T.self, from: data)
             return decodedObject
         } catch {
+            print("Decoding Error for URL \(absoluteURL): \(error)")
             throw NetworkingError.decodingFailed(error.localizedDescription)
         }
     }

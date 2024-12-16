@@ -4,19 +4,21 @@ import SwiftUI
 struct CocktailsGridView: View {
     
     @StateObject private var viewModel: CocktailViewModel
+    @StateObject private var viewDetailModel: CocktailDetailsViewModel
     @StateObject private var filterViewModel: FiltersViewModel
     private let cocktailService: CocktailService
     private let filterService: FilterService
     @State private var isFilterPresented = false
     @State private var searchText = ""
-    @State private var showSearchField = false
+    @State private var isSearchVisible = false
     @State private var isLoading = true
-
+    
     init(cocktailService: CocktailService, filterService: FilterService) {
         self.cocktailService = cocktailService
         self.filterService = filterService
         _viewModel = StateObject(wrappedValue: CocktailViewModel(cocktailService: cocktailService))
         _filterViewModel = StateObject(wrappedValue: FiltersViewModel(filterService: filterService))
+        _viewDetailModel = StateObject(wrappedValue: CocktailDetailsViewModel(cocktailService: cocktailService))
     }
 
     private let columns: [GridItem] = [
@@ -27,17 +29,46 @@ struct CocktailsGridView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 10) {
+                
                 // Search and Filter Bar
-                HStack(spacing: 10) {
-                    Text("cocktails9")
+                VStack(spacing: 10) {
+                    HStack(spacing: 10) {
+                        Text("cocktails9")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .foregroundColor(.black)
                             .padding(.leading, 10)
-
-                    Spacer()
-                    // Search Button
-                    if showSearchField {
+                        
+                        Spacer()
+                        
+                        // Search Button
+                        Button(action: {
+                            withAnimation {
+                                isSearchVisible.toggle()
+                            }
+                        }) {
+                            Image(systemName: "magnifyingglass")
+                                .padding(10)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(10)
+                                .foregroundColor(.black)
+                        }
+                        
+                        // Filter Button
+                        Button(action: {
+                            isFilterPresented.toggle()
+                        }) {
+                            Image(systemName: "line.horizontal.3.decrease.circle")
+                                .padding(10)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(10)
+                                .foregroundColor(.black)
+                        }
+                    }
+                    .padding(.horizontal)
+                    
+                    // Search Field (Dropdown)
+                    if isSearchVisible {
                         TextField("Search cocktails", text: $searchText)
                             .padding(10)
                             .background(Color(.systemGray6))
@@ -48,6 +79,9 @@ struct CocktailsGridView: View {
                                     if !searchText.isEmpty {
                                         Button(action: {
                                             searchText = ""
+                                            Task {
+                                                await viewModel.performSearch()
+                                            }
                                         }) {
                                             Image(systemName: "xmark.circle.fill")
                                                 .foregroundColor(.gray)
@@ -56,34 +90,18 @@ struct CocktailsGridView: View {
                                     }
                                 }
                             )
-                            .animation(.easeInOut, value: showSearchField)
-                    } else {
-                        Button(action: {
-                            withAnimation {
-                                showSearchField.toggle()
+                            .onChange(of: searchText) { newValue in
+                                Task {
+                                    viewModel.searchQuery = newValue
+                                    await viewModel.performSearch()
+                                }
                             }
-                        }) {
-                            Image(systemName: "magnifyingglass")
-                                .padding(10)
-                                .background(Color(.systemGray6))
-                                .cornerRadius(10)
-                                .foregroundColor(.black)
-                        }
-                    }
-
-                    // Filter Button
-                    Button(action: {
-                        isFilterPresented.toggle()
-                    }) {
-                        Image(systemName: "line.horizontal.3.decrease.circle")
-                            .padding(10)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(10)
-                            .foregroundColor(.black)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
+                            .animation(.easeInOut, value: isSearchVisible)
+                            .padding(.horizontal)
                     }
                 }
-                .padding(.horizontal)
-
+                
                 // Cocktail Grid
                 if isLoading {
                     ProgressView("Loading Cocktails...")
@@ -98,12 +116,9 @@ struct CocktailsGridView: View {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 15) {
                             ForEach(viewModel.cocktails.filter { searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText) }, id: \.id) { cocktail in
-                                NavigationLink{
-                                    
-                                    CocktailDetails()
-                                    
-                                } label: {
+                                NavigationLink(destination: CocktailDetailsView(viewModel: viewDetailModel, cocktailID: cocktail.id)) {
                                     CocktailItem(viewModel: viewModel, cocktail: cocktail)
+                                        .foregroundColor(.primary)
                                 }
                             }
                             .padding(.horizontal)
@@ -117,11 +132,27 @@ struct CocktailsGridView: View {
             .onAppear {
                 Task {
                     isLoading = true
-                    await viewModel.getCocktails()
+                    if viewModel.activeFilter == nil {
+                        await viewModel.getCocktails()
+                    }
                     isLoading = false
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .onDisappear {
+                viewModel.searchQuery = searchText
+            }
+        }
+    }
+}
+
+struct CocktailsGridTab: View {
+    let cocktailService: CocktailService
+    let filterService: FilterService
+
+    var body: some View {
+        NavigationStack {
+            CocktailsGridView(cocktailService: cocktailService, filterService: filterService)
         }
     }
 }

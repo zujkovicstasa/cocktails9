@@ -1,11 +1,13 @@
-import Foundation
-
 struct CategoriesResponse: Codable {
     let drinks: [Category]
 }
 
 struct Category: Codable {
-    let category: String
+    let strCategory: String
+    
+    var category: String {
+        return strCategory
+    }
 }
 
 struct AlcoholicOptionsResponse: Codable {
@@ -13,7 +15,11 @@ struct AlcoholicOptionsResponse: Codable {
 }
 
 struct AlcoholicOption: Codable {
-    let alcoholic: String
+    let strAlcoholic: String
+    
+    var alcoholic: String {
+        return strAlcoholic
+    }
 }
 
 struct IngredientsResponse: Codable {
@@ -21,7 +27,11 @@ struct IngredientsResponse: Codable {
 }
 
 struct Ingredient: Codable {
-    let ingredient1: String
+    let strIngredient1: String
+    
+    var ingredient1: String {
+        return strIngredient1
+    }
 }
 
 struct GlassesResponse: Codable {
@@ -29,5 +39,9 @@ struct GlassesResponse: Codable {
 }
 
 struct Glass: Codable {
-    let glass: String
+    let strGlass: String
+    
+    var glass: String {
+        return strGlass
+    }
 }

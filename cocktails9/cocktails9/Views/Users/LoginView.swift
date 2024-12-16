@@ -43,7 +43,6 @@ struct LoginView: View {
                 NavigationLink(destination: MainTabView(cocktailService: CocktailService(), filterService: FilterService()), isActive: $navigateToMain) {
                     EmptyView()
                 }
-
                 NavigationLink(destination: RegisterView(cocktailService: CocktailService(), filterService: FilterService())
                     ){
                         

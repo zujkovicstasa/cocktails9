@@ -25,10 +25,11 @@ struct FilterView: View {
                         cocktailViewModel: cocktailViewModel
                     )) {
                         Label("Categories", systemImage: "list.bullet")
-                        
                     }
-                    .task {
-                        await filterViewModel.fetchCategories()
+                    .onAppear {
+                        Task {
+                            await filterViewModel.fetchCategories()
+                        }
                     }
 
                     // Navigation for Alcoholic Options
@@ -39,8 +40,10 @@ struct FilterView: View {
                     )) {
                         Label("Alcoholic Options", systemImage: "waterbottle")
                     }
-                    .task {
-                        await filterViewModel.fetchAlcoholicOptions()
+                    .onAppear {
+                        Task {
+                            await filterViewModel.fetchAlcoholicOptions()
+                        }
                     }
 
                     // Navigation for Ingredients
@@ -51,8 +54,10 @@ struct FilterView: View {
                     )) {
                         Label("Ingredients", systemImage: "basket")
                     }
-                    .task {
-                        await filterViewModel.fetchIngredients()
+                    .onAppear {
+                        Task {
+                            await filterViewModel.fetchIngredients()
+                        }
                     }
 
                     // Navigation for Glasses
@@ -63,12 +68,14 @@ struct FilterView: View {
                     )) {
                         Label("Glasses", systemImage: "wineglass")
                     }
-                    .task {
-                        await filterViewModel.fetchGlasses()
+                    .onAppear {
+                        Task {
+                            await filterViewModel.fetchGlasses()
+                        }
                     }
                 }
             }
-            .listStyle(InsetGroupedListStyle()) // Modern grouped style
+            .listStyle(InsetGroupedListStyle())
             .navigationTitle("Filters")
             .navigationBarTitleDisplayMode(.inline)
         }
