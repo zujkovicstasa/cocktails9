@@ -18,7 +18,11 @@ class FiltersViewModel: ObservableObject {
     func fetchCategories() async {
         isLoading = true
         do {
-            categories = try await filterService.fetchCategories()
+            let fetchedCategories = try await filterService.fetchCategories()
+            // Ensure updates happen on the main thread
+            DispatchQueue.main.async {
+                self.categories = fetchedCategories
+            }
         } catch {
             print("Full error details: \(error)")
             print("Failed to fetch categories: \(error)")
@@ -30,7 +34,11 @@ class FiltersViewModel: ObservableObject {
     func fetchAlcoholicOptions() async {
         isLoading = true
         do {
-            alcoholicOptions = try await filterService.fetchAlcoholicOptions()
+            let fetchedAlcoholicOptions = try await filterService.fetchAlcoholicOptions()
+            // Ensure updates happen on the main thread
+            DispatchQueue.main.async {
+                self.alcoholicOptions = fetchedAlcoholicOptions
+            }
         } catch {
             print("Failed to fetch alcoholic options: \(error)")
         }
@@ -41,7 +49,11 @@ class FiltersViewModel: ObservableObject {
     func fetchIngredients() async {
         isLoading = true
         do {
-            ingredients = try await filterService.fetchIngredients()
+            let fetchedIngredients = try await filterService.fetchIngredients()
+            // Ensure updates happen on the main thread
+            DispatchQueue.main.async {
+                self.ingredients = fetchedIngredients
+            }
         } catch {
             print("Failed to fetch ingredients: \(error)")
         }
@@ -52,7 +64,11 @@ class FiltersViewModel: ObservableObject {
     func fetchGlasses() async {
         isLoading = true
         do {
-            glasses = try await filterService.fetchGlasses()
+            let fetchedGlasses = try await filterService.fetchGlasses()
+            // Ensure updates happen on the main thread
+            DispatchQueue.main.async {
+                self.glasses = fetchedGlasses
+            }
         } catch {
             print("Failed to fetch glasses: \(error)")
         }
