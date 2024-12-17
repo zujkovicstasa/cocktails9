@@ -8,10 +8,18 @@
 import SwiftUI
 
 @main
-struct cocktails9App: App {
+struct CocktailApp: App {
+    @StateObject private var appState = AppState()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if appState.isLoggedIn {
+                MainTabView(cocktailService: CocktailService(), filterService: FilterService())
+                    .environmentObject(appState)
+            } else {
+                LoginView(cocktailService: CocktailService(), filterService: FilterService())
+                    .environmentObject(appState)
+            }
         }
     }
 }

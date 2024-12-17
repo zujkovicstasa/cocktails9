@@ -1,27 +1,23 @@
 import SwiftUI
 
 struct ProfileView: View {
-    
+    @EnvironmentObject var appState: AppState
     @State private var user: User?
     @State private var newPassword: String = ""
     @State private var confirmPassword: String = ""
     @State private var passwordChangeSuccess: Bool = false
     @State private var errorMessage: String = ""
-    
     @State private var showingChangePassword = false
-    @Environment(\.dismiss) var dismiss // This is used to dismiss the current view
     
-    var cocktailService: CocktailService?
-    var filterService: FilterService?
+    var cocktailService: CocktailService
+    var filterService: FilterService
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
                     if let user = user {
                         VStack(spacing: 16) {
-                            
-                            
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Email: \(user.email)")
                                     .font(.body)
@@ -50,11 +46,9 @@ struct ProfileView: View {
                             .padding(.horizontal)
                             .shadow(radius: 5)
                             
-                            
                             // Logout Button Section
                             Button(action: {
                                 logout()
-                                dismiss() // Dismiss the current view after logging out
                             }) {
                                 Text("Logout")
                                     .padding()
@@ -87,15 +81,13 @@ struct ProfileView: View {
     
     private func logout() {
         UserManagement.shared.logout()
-        user = nil
+        appState.isLoggedIn = false // Update the global state
     }
 }
 
 struct ProfileTab: View {
     var body: some View {
-        NavigationStack {
-            ProfileView()
-        }
+        ProfileView(cocktailService: CocktailService(), filterService: FilterService())
     }
 }
 

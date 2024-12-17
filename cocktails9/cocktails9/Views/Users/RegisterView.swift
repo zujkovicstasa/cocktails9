@@ -21,6 +21,11 @@ struct RegisterView: View {
     @State private var favoriteCocktails: [Cocktail] = []
     @Environment(\.dismiss) private var dismiss
     
+    
+    @State private var isValidEmail = true
+    @State private var isValidPassword = true
+    @State private var isConfirmPassword = true
+    
     var body: some View {
         
         NavigationStack() {
