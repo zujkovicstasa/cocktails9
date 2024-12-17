@@ -31,7 +31,7 @@ struct CocktailsGridView: View {
             VStack(spacing: 10) {
                 
                 // Search and Filter Bar
-                VStack(spacing: 10) {
+                
                     HStack(spacing: 10) {
                         Text("cocktails9")
                             .font(.largeTitle)
@@ -100,7 +100,7 @@ struct CocktailsGridView: View {
                             .animation(.easeInOut, value: isSearchVisible)
                             .padding(.horizontal)
                     }
-                }
+                
                 
                 // Cocktail Grid
                 if isLoading {

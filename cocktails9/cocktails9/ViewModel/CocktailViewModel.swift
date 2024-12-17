@@ -14,9 +14,7 @@ class CocktailViewModel: ObservableObject {
       
     init(cocktailService: CocktailService) {
         self.cocktailService = cocktailService
-        if let currentUser = UserManagement.shared.getLoggedInUser() {
-           self.user = currentUser
-        }
+        self.user = UserManagement.shared.getLoggedInUser()
    }
     
     var favoriteCocktails: [Cocktail] {
