@@ -117,7 +117,7 @@ struct CocktailsGridView: View {
                         LazyVGrid(columns: columns, spacing: 15) {
                             ForEach(viewModel.cocktails.filter { searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText) }, id: \.id) { cocktail in
                                 NavigationLink(destination: CocktailDetailsView(viewModel: viewDetailModel, cocktailID: cocktail.id)) {
-                                    CocktailItem(viewModel: viewModel, cocktail: cocktail)
+                                    CocktailItemView(viewModel: viewModel, cocktail: cocktail)
                                         .foregroundColor(.primary)
                                 }
                             }

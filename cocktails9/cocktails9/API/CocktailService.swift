@@ -11,9 +11,21 @@ class CocktailService {
     }
     
     private enum Api {
-        static let filterAlcoholic = "filter.php?a=Alcoholic"
-        static let lookup = "lookup.php?i="
-        static let search = "search.php?s="
+        case filterAlcoholic
+        case lookup(id: String)
+        case search(query: String)
+        
+        var endpoint: String {
+            switch self {
+            case .filterAlcoholic:
+                return "filter.php?a=Alcoholic"
+            case .lookup(let id):
+                return "lookup.php?i=\(id)"
+            case .search(let query):
+                let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
+                return "search.php?s=\(encodedQuery)"
+            }
+        }
     }
     
     func fetchCocktailsWithFilters(url: String) async throws -> CocktailResponse {
@@ -22,13 +34,14 @@ class CocktailService {
     }
     
     func fetchCocktailsAsync() async throws -> [Cocktail] {
-        let response: CocktailResponse = try await networkManager.request(from: "\(baseUrl)\(Api.filterAlcoholic)", type: CocktailResponse.self)
+        let endpoint = Api.filterAlcoholic.endpoint
+        let response: CocktailResponse = try await networkManager.request(from: baseUrl + endpoint, type: CocktailResponse.self)
         return response.drinks
     }
     
     func fetchCocktailDetails(by id: String) async throws -> CocktailDetails {
-        let url = "\(baseUrl)\(Api.lookup)\(id)"
-        let response: CocktailDetailsResponse = try await networkManager.request(from: url, type: CocktailDetailsResponse.self)
+        let endpoint = Api.lookup(id: id).endpoint
+        let response: CocktailDetailsResponse = try await networkManager.request(from: baseUrl + endpoint, type: CocktailDetailsResponse.self)
         guard let details = response.drinks.first else {
             throw NSError(domain: "No cocktail details found", code: 404, userInfo: nil)
         }
@@ -36,12 +49,9 @@ class CocktailService {
     }
     
     func searchCocktails(query: String) async throws -> [Cocktail] {
-            let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
-        let url = "\(baseUrl)\(Api.search)\(encodedQuery)"
-            
-            let response: CocktailResponse = try await networkManager.request(from: url, type: CocktailResponse.self)
-            return response.drinks
-        }
-
+        let endpoint = Api.search(query: query).endpoint
+        let response: CocktailResponse = try await networkManager.request(from: baseUrl + endpoint, type: CocktailResponse.self)
+        return response.drinks
+    }
 
 }
