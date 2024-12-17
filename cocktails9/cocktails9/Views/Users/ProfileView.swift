@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 struct ProfileView: View {
     @EnvironmentObject var appState: AppState
@@ -8,6 +9,8 @@ struct ProfileView: View {
     @State private var passwordChangeSuccess: Bool = false
     @State private var errorMessage: String = ""
     @State private var showingChangePassword = false
+    @State private var avatarItem: PhotosPickerItem? // For photo picker
+    @State private var avatarImage: Image? // To store the selected image
     
     var cocktailService: CocktailService
     var filterService: FilterService
@@ -18,6 +21,45 @@ struct ProfileView: View {
                 VStack(spacing: 20) {
                     if let user = user {
                         VStack(spacing: 16) {
+                            // Profile Picture Section
+                            VStack {
+                                // Display the profile picture or a placeholder
+                                if let avatarImage = avatarImage {
+                                    avatarImage
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 100, height: 100)
+                                        .clipShape(Circle())
+                                        .padding()
+                                } else {
+                                    Image(systemName: "person.crop.circle.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 100, height: 100)
+                                        .foregroundColor(.gray)
+                                        .padding()
+                                }
+                                
+                                PhotosPicker(
+                                    selection: $avatarItem,
+                                    matching: .images,
+                                    photoLibrary: .shared()) {
+                                        Text("Select Avatar")
+                                    }
+                                    .onChange(of: avatarItem) { newItem in
+                                        Task {
+                                            // Load the selected image
+                                            if let item = newItem {
+                                                if let loadedImage = try? await item.loadTransferable(type: Image.self) {
+                                                    avatarImage = loadedImage
+                                                } else {
+                                                    print("Failed to load image")
+                                                }
+                                            }
+                                        }
+                                    }
+                            }
+                            
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Email: \(user.email)")
                                     .font(.body)
