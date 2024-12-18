@@ -17,11 +17,35 @@ enum Validator {
     }
     
     
-    static func validatePassword(_ password: String) -> Bool {
-        let passwordRegex = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+    static func validatePassword(_ password: String) -> ValidationResult {
+           
+            var errors: [String] = []
         
-        let passwordPredicate = NSPredicate(format: "SELF MATCHES %@", passwordRegex)
+            if password.count < 8 {
+                errors.append("At least 8 characters")
+            }
         
-        return passwordPredicate.evaluate(with: password)
+            if !password.contains(where: { $0.isUppercase }) {
+                errors.append("One uppercase letter")
+            }
+     
+            if !password.contains(where: { $0.isLowercase }) {
+                errors.append("One lowercase letter")
+            }
+       
+            if !password.contains(where: { $0.isNumber }) {
+                errors.append("One number")
+            }
+   
+            if errors.isEmpty {
+                return .valid
+            } else {
+                return .invalid(errors)
+            }
+        }
+        
+        enum ValidationResult {
+            case valid
+            case invalid([String])
+        }
     }
-}

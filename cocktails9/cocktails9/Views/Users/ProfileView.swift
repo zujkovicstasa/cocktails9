@@ -10,7 +10,7 @@ struct ProfileView: View {
     @State private var errorMessage: String = ""
     @State private var showingChangePassword = false
     @State private var avatarItem: PhotosPickerItem? // For photo picker
-    @State private var avatarImage: Image? // To store the selected image
+    @State private var avatarImage: UIImage? // To store the selected image as UIImage
     
     var cocktailService: CocktailService
     var filterService: FilterService
@@ -23,7 +23,7 @@ struct ProfileView: View {
                         VStack(spacing: 16) {
                             // Profile Picture Section
                             VStack(spacing: 15) {
-                                                    // Profile Picture with Gradient Background
+                                // Profile Picture with Gradient Background
                                 ZStack {
                                     LinearGradient(
                                         gradient: Gradient(colors: [Color.orange.opacity(0.6), Color.red.opacity(0.6)]),
@@ -35,7 +35,7 @@ struct ProfileView: View {
                                     .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
                                     
                                     if let avatarImage = avatarImage {
-                                        avatarImage
+                                        Image(uiImage: avatarImage)
                                             .resizable()
                                             .scaledToFill()
                                             .frame(width: 140, height: 140)
@@ -63,8 +63,14 @@ struct ProfileView: View {
                                     .onChange(of: avatarItem) { newItem in
                                         Task {
                                             if let item = newItem {
-                                                if let loadedImage = try? await item.loadTransferable(type: Image.self) {
-                                                    avatarImage = loadedImage
+                                                // Load the selected image as Data first
+                                                if let data = try? await item.loadTransferable(type: Data.self),
+                                                   let uiImage = UIImage(data: data) {
+                                                    avatarImage = uiImage
+                                                    
+                                                    // Save the avatar image data to the logged-in user
+                                                    updateAvatar(data)
+                                                    print("Avatar updated!")
                                                 }
                                             }
                                         }
@@ -133,15 +139,36 @@ struct ProfileView: View {
                 }
             }
             .onAppear {
+                // Load the user and the saved avatar image data
                 user = UserManagement.shared.getLoggedInUser()
+                loadAvatarImage()
+                print("User avatar data: \(String(describing: user?.avatarImage))")
+
             }
             .navigationBarTitle("Profile", displayMode: .inline)
+        }
+    }
+    
+    private func loadAvatarImage() {
+        // Check if the user has an avatar image saved and load it
+        if let avatarData = user?.avatarImage,
+           let uiImage = UIImage(data: avatarData) {
+            avatarImage = uiImage
         }
     }
     
     private func logout() {
         UserManagement.shared.logout()
         appState.isLoggedIn = false // Update the global state
+    }
+    
+    private func updateAvatar(_ avatarData: Data) {
+        guard var currentUser = user else { return }
+        currentUser.avatarImage = avatarData
+        UserManagement.shared.saveUser(currentUser)
+        
+        // Ensure the avatar image is updated after saving
+        avatarImage = UIImage(data: avatarData)
     }
 }
 

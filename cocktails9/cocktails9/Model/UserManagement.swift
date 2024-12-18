@@ -4,6 +4,7 @@ struct User: Codable {
     var email: String
     var password: String
     var favoriteCocktails: [Cocktail]
+    var avatarImage: Data?
 }
 
 class UserManagement {
