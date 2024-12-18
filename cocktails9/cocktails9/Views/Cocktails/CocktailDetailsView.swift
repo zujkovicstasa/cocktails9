@@ -1,11 +1,16 @@
 import SwiftUI
 
 struct CocktailDetailsView: View {
+    
     @ObservedObject var viewModel: CocktailDetailsViewModel
+    @ObservedObject var cocktailViewModel: CocktailViewModel
     let cocktailID: String
     
-    init(viewModel: CocktailDetailsViewModel, cocktailID: String) {
+    @State private var isFavorite: Bool = false
+    
+    init(viewModel: CocktailDetailsViewModel, cocktailViewModel: CocktailViewModel, cocktailID: String) {
         self.viewModel = viewModel
+        self.cocktailViewModel = cocktailViewModel
         self.cocktailID = cocktailID
     }
     
@@ -28,11 +33,21 @@ struct CocktailDetailsView: View {
                             ProgressView()
                         }
                         
-                        Text(cocktail.name)
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .padding(.horizontal)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        HStack {
+                            Text(cocktail.name)
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                                .padding(.horizontal)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            Spacer() // This will push the button to the right while keeping space between the text and button
+                            
+                            FavoriteButton(isFavorite: isFavorite) {
+                                toggleFavorite(cocktailDetails: cocktail)
+                            }
+                            .padding(.trailing) // Adds padding to the button so it doesn’t touch the edge
+                        }
+
                     
                         VStack(alignment: .leading) {
                             HStack {
@@ -127,14 +142,16 @@ struct CocktailDetailsView: View {
         .onAppear {
             Task {
                 await viewModel.fetchDetails(for: cocktailID)
+                isFavorite = cocktailViewModel.favoriteCocktails.contains(where: { $0.id == cocktailID })
             }
         }
         .navigationBarTitleDisplayMode(.inline)
     }
-}
-
-struct CocktailDetailsView_Previews: PreviewProvider {
-    static var previews: some View {
-        CocktailDetailsView(viewModel: CocktailDetailsViewModel(cocktailService: CocktailService()), cocktailID: "11000")
+    func toggleFavorite(cocktailDetails: CocktailDetails) {
+        // Assuming CocktailDetails contains a Cocktail object or can be mapped to one
+        let cocktail = Cocktail(id: cocktailDetails.id, name: cocktailDetails.name, imageURL: cocktailDetails.imageURL)
+        cocktailViewModel.toggleFavorite(cocktail: cocktail)
+        isFavorite.toggle()
     }
 }
+

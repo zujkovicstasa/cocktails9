@@ -1,17 +1,13 @@
-//
-//  cocktails9App.swift
-//  cocktails9
-//
-//  Created by Stasa Zujkovic on 26.11.24..
-//
-
 import SwiftUI
 
 @main
-struct cocktails9App: App {
+struct CocktailApp: App {
+    @StateObject private var appState = AppState() // AppState will track user login status
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(appState) // Pass AppState to ContentView and its descendants
         }
     }
 }

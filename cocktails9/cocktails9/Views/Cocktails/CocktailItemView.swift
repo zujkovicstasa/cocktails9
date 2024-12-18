@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CocktailItem: View {
+struct CocktailItemView: View {
     
     @ObservedObject var viewModel: CocktailViewModel
     let cocktail: Cocktail
@@ -35,8 +35,6 @@ struct CocktailItem: View {
                                 .resizable()
                                 .scaledToFit()
                                 .foregroundColor(.gray)
-                        } else {
-                            ProgressView()
                         }
                     }
                     .frame(height: 155)
@@ -44,20 +42,22 @@ struct CocktailItem: View {
 
                     // Favorite Button
                     FavoriteButton(isFavorite: isFavorite) {
-                        withAnimation {
-                            isUpdating = true
-                            viewModel.toggleFavorite(cocktail: cocktail)
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                isUpdating = false
-                            }
-                        }
-                    }
-                    .padding(8)
-                    .background(
-                        Circle()
-                            .fill(Color.white.opacity(0.8))
-                    )
-                    .offset(x: -5, y: 5)
+                       withAnimation(.spring()) {
+                           isUpdating = true
+                           viewModel.toggleFavorite(cocktail: cocktail)
+                           DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                               isUpdating = false
+                           }
+                       }
+                   }
+                   .padding(8)
+                   .background(
+                       Circle()
+                           .fill(Color.white.opacity(0.8))
+                   )
+                   .offset(x: -5, y: 5)
+                   .scaleEffect(isUpdating ? 1.2 : 1)
+                   .animation(.spring(), value: isUpdating)
                 }
 
 
