@@ -45,14 +45,17 @@ struct RegisterView: View {
                     .keyboardType(.emailAddress)
                     .autocapitalization(.none)
                     .textFieldStyle(CustomTextFieldStyle(icon:"at"))
+                    .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 3)
                 
                 // Password
                 SecureField("Password", text: $password)
                     .textFieldStyle(CustomTextFieldStyle(icon: "lock"))
+                    .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 3)
                 
                 // Repeat Password
                 SecureField("Repeat Password", text: $repeatPassword)
                     .textFieldStyle(CustomTextFieldStyle(icon: "lock"))
+                    .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 3)
                 
                 
                 // Register Button
@@ -63,6 +66,7 @@ struct RegisterView: View {
                         .padding()
                         .background(Color("register_color"))
                         .cornerRadius(8)
+                        .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 3)
                 }
                 NavigationLink(destination: MainTabView(cocktailService: CocktailService(), filterService: FilterService()), isActive: $navigateToMain) {
                     EmptyView() // Hidden NavigationLink

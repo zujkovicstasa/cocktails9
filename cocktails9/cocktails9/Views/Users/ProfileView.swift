@@ -22,87 +22,105 @@ struct ProfileView: View {
                     if let user = user {
                         VStack(spacing: 16) {
                             // Profile Picture Section
-                            VStack {
-                                // Display the profile picture or a placeholder
-                                if let avatarImage = avatarImage {
-                                    avatarImage
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 100, height: 100)
-                                        .clipShape(Circle())
-                                        .padding()
-                                } else {
-                                    Image(systemName: "person.crop.circle.fill")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 100, height: 100)
-                                        .foregroundColor(.gray)
-                                        .padding()
+                            VStack(spacing: 15) {
+                                                    // Profile Picture with Gradient Background
+                                ZStack {
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.orange.opacity(0.6), Color.red.opacity(0.6)]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                    .frame(width: 150, height: 150)
+                                    .clipShape(Circle())
+                                    .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
+                                    
+                                    if let avatarImage = avatarImage {
+                                        avatarImage
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 140, height: 140)
+                                            .clipShape(Circle())
+                                    } else {
+                                        Image(systemName: "person.crop.circle.fill")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 140, height: 140)
+                                            .foregroundColor(.white)
+                                    }
                                 }
                                 
                                 PhotosPicker(
                                     selection: $avatarItem,
                                     matching: .images,
                                     photoLibrary: .shared()) {
-                                        Text("Select Avatar")
+                                        Text("Change Avatar")
+                                            .font(.caption)
+                                            .foregroundColor(.white)
+                                            .padding(8)
+                                            .background(Color.black.opacity(0.6))
+                                            .cornerRadius(10)
                                     }
                                     .onChange(of: avatarItem) { newItem in
                                         Task {
-                                            // Load the selected image
                                             if let item = newItem {
                                                 if let loadedImage = try? await item.loadTransferable(type: Image.self) {
                                                     avatarImage = loadedImage
-                                                } else {
-                                                    print("Failed to load image")
                                                 }
                                             }
                                         }
                                     }
                             }
                             
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("Email: \(user.email)")
-                                    .font(.body)
+                            HStack {
+                                Image(systemName: "envelope.fill")
+                                    .foregroundColor(.orange)
+                                Text(user.email)
+                                    .font(.subheadline)
                                     .foregroundColor(.primary)
                             }
                             .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.orange.opacity(0.1))
-                            .cornerRadius(10)
-                            .padding(.horizontal)
-                            .shadow(radius: 5)
+                            .background(Color.white)
+                            .cornerRadius(12)
+                            .shadow(color: .gray.opacity(0.2), radius: 5, x: 0, y: 2)
                             
-                            Divider()
-                            
-                            // Change Password Section
                             Button(action: {
                                 showingChangePassword.toggle()
                             }) {
-                                Text("Change Password")
-                                    .padding()
-                                    .background(Color.orange)
-                                    .foregroundColor(.white)
-                                    .font(.subheadline)
-                                    .cornerRadius(8)
+                                HStack {
+                                    Image(systemName: "lock.fill")
+                                    Text("Change Password")
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.orange, Color.red]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                                .shadow(color: .orange.opacity(0.4), radius: 5, x: 0, y: 3)
                             }
-                            .padding(.horizontal)
-                            .shadow(radius: 5)
                             
-                            // Logout Button Section
+                            // Logout Button
                             Button(action: {
                                 logout()
                             }) {
-                                Text("Logout")
-                                    .padding()
-                                    .background(Color.red)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(8)
-                                    .font(.subheadline)
+                                HStack {
+                                    Image(systemName: "arrow.right.square.fill")
+                                    Text("Logout")
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.red)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                                .shadow(color: .red.opacity(0.4), radius: 5, x: 0, y: 3)
                             }
-                            .padding(.top)
-                            .shadow(radius: 5)
                         }
-                        .padding(.horizontal)
+                        .padding()
                     } else {
                         Text("User not logged in.")
                             .font(.title)

@@ -36,5 +36,6 @@ struct SplashView: View {
                 navigateToLogin = true
             }
         }
+        
     }
 }

@@ -30,13 +30,17 @@ struct LoginView: View {
                     .keyboardType(.emailAddress)
                     .autocapitalization(.none)
                     .textFieldStyle(CustomTextFieldStyle(icon: "at"))
-                   
+                    .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 3)
                 
                 SecureField("Password", text: $password)
                     .textFieldStyle(CustomTextFieldStyle(icon: "lock"))
+                    .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 3)
                 
                 Toggle("Keep Me Signed In", isOn: $keepMeSignedIn)
                     .padding(.horizontal)
+                    .onChange(of: keepMeSignedIn) { newValue in
+                        UserDefaults.standard.set(newValue, forKey: "keepMeSignedIn")
+                    }
                 
                 Button(action: handleLogin) {
                     Text("Log In")
@@ -45,10 +49,13 @@ struct LoginView: View {
                         .padding()
                         .background(Color("login_color"))
                         .cornerRadius(8)
+                        .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 3)
                 }
+                
                 NavigationLink(destination: MainTabView(cocktailService: CocktailService(), filterService: FilterService()), isActive: $navigateToMain) {
                     EmptyView()
                 }
+                
                 NavigationLink(destination: RegisterView(cocktailService: CocktailService(), filterService: FilterService())) {
                     Text("Register")
                         .foregroundColor(Color("login_color"))
@@ -64,13 +71,32 @@ struct LoginView: View {
                 Spacer(minLength: 0)
             }
             .padding(70)
-            .onAppear(perform: checkAutoLogin)
+            .onAppear {
+                // Load the saved "Keep Me Signed In" state from UserDefaults
+                keepMeSignedIn = UserDefaults.standard.bool(forKey: "keepMeSignedIn")
+                checkAutoLogin()
+            }
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Login Failed"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
         }
     }
     
+    private func saveLoginState() {
+        UserDefaults.standard.set(true, forKey: "isLoggedIn")
+        UserDefaults.standard.set(email, forKey: "loggedInEmail")
+        UserDefaults.standard.set(keepMeSignedIn, forKey: "keepMeSignedIn")
+    }
+
+    private func checkAutoLogin() {
+        if UserDefaults.standard.bool(forKey: "isLoggedIn"),
+           UserDefaults.standard.bool(forKey: "keepMeSignedIn"),
+           let savedEmail = UserDefaults.standard.string(forKey: "loggedInEmail") {
+            email = savedEmail
+            navigateToMain = true
+        }
+    }
+
     private func handleLogin() {
         guard !email.isEmpty, !password.isEmpty else {
             alertMessage = "Please enter both email and password."
@@ -104,22 +130,14 @@ struct LoginView: View {
             showAlert = true
         }
     }
-    
-    private func saveLoginState() {
-        UserDefaults.standard.set(true, forKey: "isLoggedIn")
-        UserDefaults.standard.set(email, forKey: "loggedInEmail")
-    }
-    
-    private func checkAutoLogin() {
-        if UserDefaults.standard.bool(forKey: "isLoggedIn") {
-            if let savedEmail = UserDefaults.standard.string(forKey: "loggedInEmail") {
-                email = savedEmail
-                navigateToMain = true
-            }
-        }
+        
+    private func logout() {
+        UserDefaults.standard.removeObject(forKey: "isLoggedIn")
+        UserDefaults.standard.removeObject(forKey: "loggedInEmail")
+        UserDefaults.standard.removeObject(forKey: "keepMeSignedIn")
+        appState.isLoggedIn = false
     }
 }
-
 
 #Preview {
     LoginView(cocktailService: CocktailService(), filterService: FilterService())

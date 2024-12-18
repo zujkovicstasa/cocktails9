@@ -35,9 +35,10 @@ class UserManagement {
     }
     
     func logout() {
-        UserDefaults.standard.removeObject(forKey: loggedInUserKey)
-    }
-
+            // Clear the logged-in user's email
+            UserDefaults.standard.removeObject(forKey: loggedInUserKey)
+        }
+    
     func getLoggedInUser() -> User? {
         if let email = UserDefaults.standard.string(forKey: loggedInUserKey) {
             return getUser(byEmail: email)
