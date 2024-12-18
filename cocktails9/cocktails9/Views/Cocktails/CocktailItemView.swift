@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CocktailItem: View {
+struct CocktailItemView: View {
     
     @ObservedObject var viewModel: CocktailViewModel
     let cocktail: Cocktail

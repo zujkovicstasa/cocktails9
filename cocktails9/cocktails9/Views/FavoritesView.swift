@@ -58,7 +58,7 @@ struct FavoritesView: View {
                                     CocktailDetailsView(viewModel: viewDetailModel, cocktailID: cocktail.id)
                                     
                                 } label: {
-                                    CocktailItem(viewModel: viewModel, cocktail: cocktail)
+                                    CocktailItemView(viewModel: viewModel, cocktail: cocktail)
                                         .foregroundColor(.primary)
                                 }
                             }

@@ -58,4 +58,5 @@ class FiltersViewModel: ObservableObject {
         }
         isLoading = false
     }
+    
 }
