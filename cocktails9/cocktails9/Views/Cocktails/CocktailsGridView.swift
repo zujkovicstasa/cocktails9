@@ -120,6 +120,7 @@ struct CocktailsGridView: View {
                         LazyVGrid(columns: columns, spacing: 15) {
                             ForEach(viewModel.cocktails, id: \.id) { cocktail in
                                 NavigationLink(destination: CocktailDetailsView(viewModel: viewDetailModel, cocktailID: cocktail.id)) {
+
                                     CocktailItemView(viewModel: viewModel, cocktail: cocktail)
                                         .foregroundColor(.primary)
                                 }

@@ -55,7 +55,7 @@ struct FavoritesView: View {
                             ForEach(viewModel.favoriteCocktails, id: \.id) { cocktail in
                                 NavigationLink{
                                     
-                                    CocktailDetailsView(viewModel: viewDetailModel, cocktailID: cocktail.id)
+                                    CocktailDetailsView(viewModel: viewDetailModel, cocktailViewModel: viewModel, cocktailID: cocktail.id)
                                     
                                 } label: {
                                     CocktailItemView(viewModel: viewModel, cocktail: cocktail)
