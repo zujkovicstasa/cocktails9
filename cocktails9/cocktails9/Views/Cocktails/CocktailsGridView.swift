@@ -117,17 +117,17 @@ struct CocktailsGridView: View {
                         .padding(.top, 50)
                 } else {
                     ScrollView {
-                        LazyVGrid(columns: columns, spacing: 15) {
-                            ForEach(viewModel.cocktails, id: \.id) { cocktail in
-                                NavigationLink(destination: CocktailDetailsView(viewModel: viewDetailModel, cocktailID: cocktail.id)) {
-
-                                    CocktailItemView(viewModel: viewModel, cocktail: cocktail)
-                                        .foregroundColor(.primary)
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                    }
+                       LazyVGrid(columns: columns, spacing: 15) {
+                           
+                           ForEach(viewModel.cocktails, id: \.id) { cocktail in
+                               NavigationLink(destination: CocktailDetailsView(viewModel: viewDetailModel, cocktailViewModel: viewModel, cocktailID: cocktail.id)) {
+                                   CocktailItemView(viewModel: viewModel, cocktail: cocktail)
+                                       .foregroundColor(.primary)
+                               }
+                           }
+                           .padding(.horizontal)
+                       }
+                   }
                 }
             }
             .sheet(isPresented: $isFilterPresented) {
