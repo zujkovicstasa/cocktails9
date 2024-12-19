@@ -49,49 +49,24 @@ struct CocktailDetailsView: View {
                         }
 
                     
-                        VStack(alignment: .leading) {
-                            HStack {
-                                Image(systemName: "a.square.fill")
-                                    .foregroundColor(.orange)
-                                Text("Alcoholic: ")
-                                Text("\(cocktail.alcoholic)")
-                                    .font(.body)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(Color.orange.opacity(0.2))
-                                    .foregroundColor(.orange)
-                                    .cornerRadius(20)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        VStack {
+                            CocktailDetailItem(
+                                iconName: "a.square.fill",
+                                label: "Alcoholic",
+                                value: cocktail.alcoholic
+                            )
                             
-
-                            HStack {
-                                Image(systemName: "book.pages.fill")
-                                    .foregroundColor(.orange)
-                                Text("Category: ")
-                                Text("\(cocktail.category)")
-                                    .font(.body)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(Color.orange.opacity(0.2))
-                                    .foregroundColor(.orange)
-                                    .cornerRadius(20)
-                            } 
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                            HStack {
-                                Image(systemName: "wineglass")
-                                    .foregroundColor(.orange)
-                                Text("Glass: ")
-                                Text("\(cocktail.glass)")
-                                    .font(.body)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(Color.orange.opacity(0.2))
-                                    .foregroundColor(.orange)
-                                    .cornerRadius(20)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            CocktailDetailItem(
+                                iconName: "book.pages.fill",
+                                label: "Category",
+                                value: cocktail.category
+                            )
+                            
+                            CocktailDetailItem(
+                                iconName: "wineglass",
+                                label: "Glass",
+                                value: cocktail.glass
+                            )
                         }
                         .padding(.horizontal)
                         

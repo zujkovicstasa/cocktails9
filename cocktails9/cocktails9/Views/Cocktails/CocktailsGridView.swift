@@ -12,6 +12,7 @@ struct CocktailsGridView: View {
     @State private var searchText = ""
     @State private var isSearchVisible = false
     @State private var isLoading = true
+    @State private var searchTimer: Timer?
     
     init(cocktailService: CocktailService, filterService: FilterService) {
         self.cocktailService = cocktailService
@@ -31,7 +32,7 @@ struct CocktailsGridView: View {
             VStack(spacing: 10) {
                 
                 // Search and Filter Bar
-                VStack(spacing: 10) {
+                
                     HStack(spacing: 10) {
                         Text("cocktails9")
                             .font(.largeTitle)
@@ -80,7 +81,7 @@ struct CocktailsGridView: View {
                                         Button(action: {
                                             searchText = ""
                                             Task {
-                                                await viewModel.performSearch()
+                                                await viewModel.performSearch(query:"")
                                             }
                                         }) {
                                             Image(systemName: "xmark.circle.fill")
@@ -90,17 +91,19 @@ struct CocktailsGridView: View {
                                     }
                                 }
                             )
-                            .onChange(of: searchText) { newValue in
-                                Task {
-                                    viewModel.searchQuery = newValue
-                                    await viewModel.performSearch()
+                            .onChange(of: searchText) { newValue, _ in
+                                searchTimer?.invalidate()
+                                searchTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in
+                                    Task {
+                                        await viewModel.performSearch(query: newValue)
+                                    }
                                 }
                             }
                             .transition(.opacity.combined(with: .move(edge: .top)))
                             .animation(.easeInOut, value: isSearchVisible)
                             .padding(.horizontal)
                     }
-                }
+                
                 
                 // Cocktail Grid
                 if isLoading {
@@ -115,8 +118,9 @@ struct CocktailsGridView: View {
                 } else {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 15) {
-                            ForEach(viewModel.cocktails.filter { searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText) }, id: \.id) { cocktail in
-                                NavigationLink(destination: CocktailDetailsView(viewModel: viewDetailModel, cocktailViewModel: viewModel, cocktailID: cocktail.id)) {
+                            ForEach(viewModel.cocktails, id: \.id) { cocktail in
+                                NavigationLink(destination: CocktailDetailsView(viewModel: viewDetailModel, cocktailID: cocktail.id)) {
+
                                     CocktailItemView(viewModel: viewModel, cocktail: cocktail)
                                         .foregroundColor(.primary)
                                 }

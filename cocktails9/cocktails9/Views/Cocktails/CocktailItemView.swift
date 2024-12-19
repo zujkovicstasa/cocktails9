@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct CocktailItemView: View {
-    
+
     @ObservedObject var viewModel: CocktailViewModel
     let cocktail: Cocktail
     @State private var isUpdating = false
@@ -9,6 +9,7 @@ struct CocktailItemView: View {
     var isFavorite: Bool {
             UserManagement.shared.getLoggedInUser()?.favoriteCocktails.contains(where: { $0.id == cocktail.id }) ?? false
         }
+
     
     init(viewModel: CocktailViewModel, cocktail: Cocktail) {
         self.viewModel = viewModel
@@ -17,13 +18,13 @@ struct CocktailItemView: View {
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            
+
             RoundedRectangle(cornerRadius: 15)
                 .fill(Color(.systemBackground))
                 .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
 
             VStack(alignment: .leading, spacing: 8) {
-            
+
                 ZStack(alignment: .topTrailing) {
                     AsyncImage(url: URL(string: cocktail.imageURL)) { phase in
                         if let image = phase.image {
@@ -42,6 +43,7 @@ struct CocktailItemView: View {
 
                     // Favorite Button
                     FavoriteButton(isFavorite: isFavorite) {
+
                        withAnimation(.spring()) {
                            isUpdating = true
                            viewModel.toggleFavorite(cocktail: cocktail)
@@ -60,7 +62,6 @@ struct CocktailItemView: View {
                    .animation(.spring(), value: isUpdating)
                 }
 
-
                 // Cocktail Name
                 Text(cocktail.name.isEmpty ? "Unknown" : cocktail.name)
                     .foregroundStyle(.primary)
@@ -74,23 +75,3 @@ struct CocktailItemView: View {
     }
 }
 
-
-
-// Helper to add specific corner radius
-extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
-    }
-}
-
-struct RoundedCorner: Shape {
-    var radius: CGFloat = 0.0
-    var corners: UIRectCorner = .allCorners
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(roundedRect: rect,
-                                byRoundingCorners: corners,
-                                cornerRadii: CGSize(width: radius, height: radius))
-        return Path(path.cgPath)
-    }
-}

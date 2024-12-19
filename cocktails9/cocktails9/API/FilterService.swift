@@ -1,4 +1,3 @@
-
 class FilterService {
     
     private let networkManager: NetworkManager
@@ -8,34 +7,40 @@ class FilterService {
         self.networkManager = networkManager
     }
     
-    private enum Api {
-            static let categories = "list.php?c=list"
-            static let alcoholicOptions = "list.php?a=list"
-            static let ingredients = "list.php?i=list"
-            static let glasses = "list.php?g=list"
-        }
+    private enum Api : String {
+        
+        case categories = "list.php?c=list"
+        case alcoholicOptions = "list.php?a=list"
+        case ingredients = "list.php?i=list"
+        case glasses  = "list.php?g=list"
+        
+    }
     
     // Fetch Categories
     func fetchCategories() async throws -> [String] {
-        let response: CategoriesResponse = try await networkManager.request(from: "\(baseUrl)\(Api.categories)", type: CategoriesResponse.self)
+        let endpoint = Api.categories
+        let response: CategoriesResponse = try await networkManager.request(from: baseUrl + Api.categories.rawValue, type: CategoriesResponse.self)
         return response.drinks.map { $0.category }
     }
     
     // Fetch Alcoholic Options
     func fetchAlcoholicOptions() async throws -> [String] {
-        let response: AlcoholicOptionsResponse = try await networkManager.request(from: "\(baseUrl)\(Api.alcoholicOptions)", type: AlcoholicOptionsResponse.self)
+        let endpoint = Api.alcoholicOptions
+        let response: AlcoholicOptionsResponse = try await networkManager.request(from: baseUrl + Api.alcoholicOptions.rawValue, type: AlcoholicOptionsResponse.self)
         return response.drinks.map { $0.alcoholic }
     }
     
     // Fetch Ingredients
     func fetchIngredients() async throws -> [String] {
-        let response: IngredientsResponse = try await networkManager.request(from: "\(baseUrl)\(Api.ingredients)", type: IngredientsResponse.self)
+        let endpoint = Api.ingredients
+        let response: IngredientsResponse = try await networkManager.request(from: baseUrl + Api.ingredients.rawValue, type: IngredientsResponse.self)
         return response.drinks.map { $0.ingredient1 }
     }
     
     // Fetch Glasses
     func fetchGlasses() async throws -> [String] {
-        let response: GlassesResponse = try await networkManager.request(from: "\(baseUrl)\(Api.glasses)", type: GlassesResponse.self)
+        let endpoint = Api.glasses
+        let response: GlassesResponse = try await networkManager.request(from: baseUrl + Api.glasses.rawValue, type: GlassesResponse.self)
         return response.drinks.map { $0.glass }
     }
 }
