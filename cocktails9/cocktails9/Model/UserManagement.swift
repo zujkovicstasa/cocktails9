@@ -1,15 +1,10 @@
-//
-//  UserManagment.swift
-//  cocktails9
-//
-//  Created by Stasa Zujkovic on 2.12.24..
-//
-
 import Foundation
 
 struct User: Codable {
-    let email: String
-    let password: String
+    var email: String
+    var password: String
+    var favoriteCocktails: [Cocktail]
+    var avatarImage: Data?
 }
 
 class UserManagement {
@@ -17,12 +12,11 @@ class UserManagement {
     
     private init() {}
     
-    func saveUser(_ user: User) {
-        let encoder = JSONEncoder()
-        if let encoded = try? encoder.encode(user) {
-            UserDefaults.standard.set(encoded, forKey: "user-\(user.email)")
+    private let loggedInUserKey = "loggedInUserEmail"
+    
+    func setLoggedInUser(email: String) {
+            UserDefaults.standard.set(email, forKey: loggedInUserKey)
         }
-    }
     
     func getUser(byEmail email: String) -> User? {
         if let savedUserData = UserDefaults.standard.data(forKey: "user-\(email)") {
@@ -33,4 +27,35 @@ class UserManagement {
         }
         return nil
     }
+
+    func saveUser(_ user: User) {
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(user) {
+            UserDefaults.standard.set(encoded, forKey: "user-\(user.email)")
+        }
+    }
+    
+    func logout() {
+            // Clear the logged-in user's email
+            UserDefaults.standard.removeObject(forKey: loggedInUserKey)
+        }
+    
+    func getLoggedInUser() -> User? {
+        if let email = UserDefaults.standard.string(forKey: loggedInUserKey) {
+            return getUser(byEmail: email)
+        }
+        return nil
+    }
+
+    func updateFavorites(forLoggedInUserWith cocktail: Cocktail) {
+        if var currentUser = getLoggedInUser() {
+            if let index = currentUser.favoriteCocktails.firstIndex(where: { $0.id == cocktail.id }) {
+                currentUser.favoriteCocktails.remove(at: index)
+            } else {
+                currentUser.favoriteCocktails.append(cocktail)
+            }
+            saveUser(currentUser)
+        }
+    }
+    
 }

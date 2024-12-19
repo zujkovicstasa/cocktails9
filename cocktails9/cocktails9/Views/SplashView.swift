@@ -1,12 +1,13 @@
 import SwiftUI
 
 struct SplashView: View {
+    
     @Binding var navigateToLogin: Bool
     @State private var progress: CGFloat = 0.0
     
     var body: some View {
         ZStack {
-            Color(red: 0.701, green: 0.854, blue: 0.99)
+            Color(.splash)
                 .edgesIgnoringSafeArea(.all)
             
             // First image (black and white)
@@ -35,5 +36,6 @@ struct SplashView: View {
                 navigateToLogin = true
             }
         }
+        
     }
 }
