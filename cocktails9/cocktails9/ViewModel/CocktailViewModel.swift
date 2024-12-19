@@ -27,7 +27,7 @@ class CocktailViewModel: ObservableObject {
     func updateLoggedInUser() {
         if let currentUser = UserManagement.shared.getLoggedInUser() {
             self.user = currentUser
-            self.loadFavorites()
+            self.reloadUser()
         } else {
             self.user = nil
         }
@@ -38,7 +38,7 @@ class CocktailViewModel: ObservableObject {
             let fetchedCocktails = try await cocktailService.fetchCocktailsAsync()
             DispatchQueue.main.async {
                 self.cocktails = fetchedCocktails
-                self.loadFavorites()
+                self.reloadUser()
             }
         } catch {
             print("Error fetching cocktails: \(error)")
@@ -89,7 +89,8 @@ class CocktailViewModel: ObservableObject {
         }
     }
     
-    func loadFavorites() {
+    // reloads favorites along with user data
+    func reloadUser() {
         guard let user = UserManagement.shared.getLoggedInUser() else { return }
         self.user = user
     }
@@ -107,9 +108,9 @@ class CocktailViewModel: ObservableObject {
        updateLoggedInUser()
     }
     
-    func performSearch() async {
+    func performSearch(query: String) async {
         do {
-            let results = try await cocktailService.searchCocktails(query: searchQuery)
+            let results = try await cocktailService.searchCocktails(query: query)
             await MainActor.run {
                 self.cocktails = results
             }
